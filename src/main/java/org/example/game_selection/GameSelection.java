@@ -1,9 +1,6 @@
 package org.example.game_selection;
 
-import org.example.game_selection.panels.HostPanel;
-import org.example.game_selection.panels.JoinPanel;
-import org.example.game_selection.panels.PanelType;
-import org.example.game_selection.panels.MainPanel;
+import org.example.game_selection.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +29,7 @@ public class GameSelection extends JFrame {
         panels.put(PanelType.MAIN_MENU, new MainPanel(this));
         panels.put(PanelType.JOIN_GAME, new JoinPanel(this));
         panels.put(PanelType.HOST_GAME, new HostPanel(this));
+        panels.put(PanelType.WAITING_LOBBY, new WaitingLobby(this));
 
         changePanel(PanelType.MAIN_MENU);
 

@@ -22,13 +22,14 @@ public class Client {
         this.username = username;
         try {
             //Versucht Verbindung mit dem Server aufzubauen
+            System.out.println("client connection to server!");
             socket = new Socket(ip, port);
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
-            
+
             joinWaitingLobby();
 
         } catch (IOException e) {

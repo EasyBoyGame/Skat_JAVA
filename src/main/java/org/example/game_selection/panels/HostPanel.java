@@ -45,7 +45,7 @@ public class HostPanel extends JPanel {
             Server server = new Server(port);
             new Thread(server).start();
             Client client = new Client(username, "localhost", port);
-            //parentWindow.changePanel(PanelType.WAITING_LOBBY);
+            parentWindow.changePanel(PanelType.WAITING_LOBBY);
         });
         add(hostbutton);
 
