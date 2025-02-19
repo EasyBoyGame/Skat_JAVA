@@ -2,6 +2,7 @@ package org.example.client_server_system;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientHandler implements Runnable {
     String username;
@@ -42,10 +43,16 @@ public class ClientHandler implements Runnable {
     private void processMessage(MessageType actionType, String actionBody) {
         switch (actionType){
             case START_GAME:
+                server.startGameLogic();
             case WAITING_LOBBY_JOIN:
                 server.newPlayerJoin(username);
             default:
                 System.out.println("MessageType invalid!");
         }
+    }
+
+
+    public void updateLobby(ArrayList<ClientHandler> clientHandlers){
+        //TODO Update Waitinglobby hier
     }
 }

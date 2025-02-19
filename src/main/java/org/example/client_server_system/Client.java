@@ -2,6 +2,7 @@ package org.example.client_server_system;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
@@ -31,10 +32,24 @@ public class Client {
             bufferedWriter.flush();
 
             joinWaitingLobby();
+            serverAnswerListener();
 
         } catch (IOException e) {
             System.out.println("Can't connect to server ");
         }
+    }
+
+    private void serverAnswerListener() {
+        new Thread(() -> {
+            try {
+                while (socket.isConnected()) {
+                    System.out.println(bufferedReader.readLine());
+                }
+                System.out.println("Read message loop done.");
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void joinWaitingLobby() {

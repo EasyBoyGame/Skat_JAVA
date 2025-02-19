@@ -56,7 +56,11 @@ public class Server implements Runnable {
 
     public void newPlayerJoin(String username) {
         for (ClientHandler clienthandler: clientHandlers) {
-
+            clienthandler.updateLobby(clientHandlers);
         }
+    }
+
+    public void startGameLogic() {
+        //TODO init game Logik here
     }
 }
