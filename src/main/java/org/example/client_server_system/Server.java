@@ -11,7 +11,7 @@ public class Server implements Runnable {
     //Attribute
     private ServerSocket serverSocket;
     private int port;
-    ArrayList<ClientHandler> clientHandlers;
+    ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     BufferedReader bufferedReader;
 
     //Constructor
@@ -35,7 +35,7 @@ public class Server implements Runnable {
 
                 bufferedReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 String username = bufferedReader.readLine();
-                System.out.println("The Client " + username + "has connected.");
+                System.out.println("The Client " + username + " has connected.");
 
                 ClientHandler clientHandler = new ClientHandler(username, client, this);
                 clientHandlers.add(clientHandler);
