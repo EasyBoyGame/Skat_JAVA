@@ -6,6 +6,8 @@ import org.example.game_selection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class HostPanel extends JPanel {
 
@@ -45,7 +47,11 @@ public class HostPanel extends JPanel {
             Server server = new Server(port);
             new Thread(server).start();
             Client client = new Client(username, "localhost", port);
-            parentWindow.changePanel(PanelType.WAITING_LOBBY);
+            try {
+                parentWindow.changePanel(PanelType.WAITING_LOBBY, username, InetAddress.getLocalHost(), port);
+            } catch (UnknownHostException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         add(hostbutton);
 
@@ -71,11 +77,11 @@ public class HostPanel extends JPanel {
 
         // JLabel für Bezeichnung
         JLabel label = new JLabel(text);
-        label.setSize(panelWidth/4, panelHeight);
+        label.setSize(panelWidth / 4, panelHeight);
         namePanel.add(label);
 
         // Textfeld zum Label
-        textField.setBounds(panelWidth/4, 0, panelWidth/4*3, panelHeight);
+        textField.setBounds(panelWidth / 4, 0, panelWidth / 4 * 3, panelHeight);
         namePanel.add(textField);
 
         add(namePanel);

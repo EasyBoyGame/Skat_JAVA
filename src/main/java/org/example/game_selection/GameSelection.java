@@ -4,6 +4,7 @@ import org.example.game_selection.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.InetAddress;
 import java.util.HashMap;
 
 public class GameSelection extends JFrame {
@@ -29,7 +30,7 @@ public class GameSelection extends JFrame {
         panels.put(PanelType.MAIN_MENU, new MainPanel(this));
         panels.put(PanelType.JOIN_GAME, new JoinPanel(this));
         panels.put(PanelType.HOST_GAME, new HostPanel(this));
-        panels.put(PanelType.WAITING_LOBBY, new WaitingLobby(this));
+        panels.put(PanelType.WAITING_LOBBY, new WaitingLobby(this, null, null, 0));
 
         changePanel(PanelType.MAIN_MENU);
 
@@ -43,6 +44,23 @@ public class GameSelection extends JFrame {
         }
 
         currentPanel = panels.get(type);
+        add(currentPanel);
+        revalidate();
+        repaint();
+    }
+
+    public void changePanel(PanelType type, String username, InetAddress ip, int port){
+        if (currentPanel != null) {
+            remove(currentPanel);
+        }
+
+        if(type == PanelType.WAITING_LOBBY){
+            currentPanel = new WaitingLobby(this, username, ip, port);
+        }
+        else {
+            currentPanel = panels.get(type);
+        }
+
         add(currentPanel);
         revalidate();
         repaint();
