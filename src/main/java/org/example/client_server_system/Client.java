@@ -10,8 +10,6 @@ public class Client {
     Socket socket;
     BufferedReader bufferedReader;
     BufferedWriter bufferedWriter;
-    private int port;
-    private int ip;
     String username;
 
     /**
@@ -28,6 +26,8 @@ public class Client {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             bufferedWriter.write(username);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
             
             joinWaitingLobby();
 
@@ -37,7 +37,11 @@ public class Client {
     }
 
     private void joinWaitingLobby() {
-        
+        try {
+            bufferedWriter.write(String.valueOf(MessageType.WAITING_LOBBY_JOIN));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

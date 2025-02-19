@@ -53,4 +53,10 @@ public class Server implements Runnable {
     public void run() {
         startClientLoop();
     }
+
+    public void newPlayerJoin(String username) {
+        for (ClientHandler clienthandler: clientHandlers) {
+
+        }
+    }
 }

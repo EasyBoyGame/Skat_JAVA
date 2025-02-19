@@ -42,6 +42,8 @@ public class ClientHandler implements Runnable {
     private void processMessage(MessageType actionType, String actionBody) {
         switch (actionType){
             case START_GAME:
+            case WAITING_LOBBY_JOIN:
+                server.newPlayerJoin(username);
             default:
                 System.out.println("MessageType invalid!");
         }
