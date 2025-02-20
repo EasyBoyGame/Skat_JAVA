@@ -46,10 +46,14 @@ public class HostPanel extends JPanel {
             String username = textField1.getText();
             Server server = new Server(port);
             new Thread(server).start();
-            Client client = new Client(username, "localhost", port);
             try {
+                Thread.sleep(500);
+                Client client = new Client(username, "localhost", port);
+
                 parentWindow.changePanel(PanelType.WAITING_LOBBY, username, InetAddress.getLocalHost(), port);
             } catch (UnknownHostException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
         });

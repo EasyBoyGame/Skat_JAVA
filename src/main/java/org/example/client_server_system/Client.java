@@ -1,17 +1,18 @@
 package org.example.client_server_system;
 
 import java.io.*;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 public class Client {
 
     //Attribute
-    Socket socket;
-    BufferedReader bufferedReader;
-    BufferedWriter bufferedWriter;
+    SocketChannel clientChannel;
+    ByteBuffer buffer;
     String username;
+    String ip;
+    int port;
 
     /**
      * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vomServer
@@ -21,41 +22,60 @@ public class Client {
      */
     public Client(String username, String ip, int port) {
         this.username = username;
+        this.ip = ip;
+        this.port = port;
+
+        initClient();
+        startServerListenLoop();
         try {
-            //Versucht Verbindung mit dem Server aufzubauen
-            System.out.println("client connection to server!");
-            socket = new Socket(ip, port);
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            bufferedWriter.write(username);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-
-            joinWaitingLobby();
-            serverAnswerListener();
-
+            sendPlayerActions(MessageType.CARD_PLAYED, "c7");
+            sendPlayerActions(MessageType.START_GAME, "Heheheha");
+            sendPlayerActions(MessageType.UPDATE_LOBBY, "ne diggi");
         } catch (IOException e) {
-            System.out.println("Can't connect to server ");
+            throw new RuntimeException(e);
         }
     }
 
-    private void serverAnswerListener() {
+    private void initClient() {
+        try {
+            clientChannel = SocketChannel.open(new InetSocketAddress(ip, port));
+            clientChannel.configureBlocking(false);
+            buffer = ByteBuffer.allocate(1024);
+
+            System.out.println("Connected to Skat Server!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void startServerListenLoop() {
         new Thread(() -> {
             try {
-                while (socket.isConnected()) {
-                    System.out.println(bufferedReader.readLine());
+                while (true) {
+                    buffer.clear();
+                    int bytesRead = clientChannel.read(buffer);
+                    if (bytesRead > 0) {
+                        buffer.flip();
+                        String message = new String(buffer.array(), 0, bytesRead);
+                        System.out.println("Server: " + message);
+                    }
                 }
-                System.out.println("Read message loop done.");
-            } catch (final IOException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                System.out.println("Disconnected from server.");
             }
         }).start();
     }
 
-    private void joinWaitingLobby() {
+    private void sendPlayerActions(MessageType messageType, String message) throws IOException {
+        buffer.clear();
+        message = messageType.name() + ":" + message;
+        buffer.put(message.getBytes());
+        buffer.flip();
+        clientChannel.write(buffer);
+
         try {
-            bufferedWriter.write(String.valueOf(MessageType.WAITING_LOBBY_JOIN));
-        } catch (IOException e) {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
