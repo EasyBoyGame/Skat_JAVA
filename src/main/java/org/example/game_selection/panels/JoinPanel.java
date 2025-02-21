@@ -1,5 +1,6 @@
 package org.example.game_selection.panels;
 
+import org.example.client_server_system.Client;
 import org.example.game_selection.GameSelection;
 
 import javax.swing.*;
@@ -8,6 +9,9 @@ import java.awt.*;
 public class JoinPanel extends JPanel {
 
     GameSelection parentWindow;
+    JTextField textField1;
+    JTextField textField2;
+    JTextField textField3;
 
     public JoinPanel(GameSelection parentWindow) {
         this.parentWindow = parentWindow;
@@ -25,9 +29,9 @@ public class JoinPanel extends JPanel {
     }
 
     private void initWindow() {
-        createInputLabel(1, "Username:");
-        createInputLabel(2, "IP:");
-        createInputLabel(3, "Port:");
+        createInputLabel(1, "Username:", textField1);
+        createInputLabel(2, "IP:", textField2);
+        createInputLabel(3, "Port:", textField3);
 
         initButton();
     }
@@ -38,6 +42,7 @@ public class JoinPanel extends JPanel {
         JButton joinButton = new JButton("JOIN");
         joinButton.setBounds((parentWindow.getWidth() - 100) / 2, parentWindow.getHeight() / 10 * 6, 100, parentWindow.getHeight() / 9);
         joinButton.setVisible(true);
+        joinButton.addActionListener(e -> {Client client = new Client(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), parentWindow);});
         add(joinButton);
 
         // Return Button
@@ -48,7 +53,7 @@ public class JoinPanel extends JPanel {
     }
 
 
-    private void createInputLabel(int number, String text) {
+    private void createInputLabel(int number, String text, JTextField textField) {
         // Größenparameter
         int panelWidth = parentWindow.getWidth() / 4 * 3;
         int panelHeight = parentWindow.getHeight() / 9;
@@ -66,7 +71,7 @@ public class JoinPanel extends JPanel {
         namePanel.add(label);
 
         // Textfeld zum JLabel
-        JTextField textField = new JTextField();
+        textField = new JTextField();
         textField.setBounds(panelWidth/4, 0, panelWidth/4*3, panelHeight);
         namePanel.add(textField);
 

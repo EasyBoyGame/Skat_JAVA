@@ -48,11 +48,7 @@ public class HostPanel extends JPanel {
             new Thread(server).start();
             try {
                 Thread.sleep(500);
-                Client client = new Client(username, "localhost", port);
-
-                parentWindow.changePanel(PanelType.WAITING_LOBBY, username, InetAddress.getLocalHost(), port);
-            } catch (UnknownHostException ex) {
-                throw new RuntimeException(ex);
+                Client client = new Client(username, "localhost", port, parentWindow);
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }

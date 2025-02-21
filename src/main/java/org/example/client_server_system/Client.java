@@ -1,5 +1,10 @@
 package org.example.client_server_system;
 
+import org.example.game_selection.GameSelection;
+import org.example.game_selection.panels.PanelType;
+import org.example.game_selection.panels.WaitingLobby;
+
+import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,6 +17,7 @@ public class Client {
     ByteBuffer buffer;
     String username;
     String ip;
+    GameSelection parentwindow;
     int port;
 
     /**
@@ -20,20 +26,19 @@ public class Client {
      * @param ip Addresse aus dem Intranet
      * @param port Port des Servers mit dem man sich verbinden möchte
      */
-    public Client(String username, String ip, int port) {
+    public Client(String username, String ip, int port, GameSelection parentwindow) {
         this.username = username;
         this.ip = ip;
         this.port = port;
+        this.parentwindow = parentwindow;
 
         initClient();
-        startServerListenLoop();
         try {
-            sendPlayerActions(MessageType.CARD_PLAYED, "c7");
-            sendPlayerActions(MessageType.START_GAME, "Heheheha");
-            sendPlayerActions(MessageType.UPDATE_LOBBY, "ne diggi");
+            sendPlayerActions(MessageType.CONNECTION, username);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        startServerListenLoop();
     }
 
     private void initClient() {
@@ -54,10 +59,26 @@ public class Client {
                 while (true) {
                     buffer.clear();
                     int bytesRead = clientChannel.read(buffer);
+
                     if (bytesRead > 0) {
+
+                        // wandelt bytes in String um
                         buffer.flip();
-                        String message = new String(buffer.array(), 0, bytesRead);
+                        byte[] bytes = new byte[bytesRead];
+                        buffer.get(bytes);
+                        String message = new String(bytes).trim();
                         System.out.println("Server: " + message);
+
+                        // teilt Nachricht in Typ und Inhalt auf
+                        String[] parts = message.split(":", 2);
+                        if (parts.length < 2) return; // Nachrichtenformat ungültig
+
+                        MessageType messageType = MessageType.valueOf(parts[0]);
+                        String content = parts[1];
+
+                        switch (messageType){
+                            case UPDATE_LOBBY -> updateWaitingLobby(content);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -66,15 +87,24 @@ public class Client {
         }).start();
     }
 
+    private void updateWaitingLobby(String message) {
+        WaitingLobby.getInstance().setPort(port);
+        String[] players = message.split(", ", 5);
+        for (String player: players) {
+            String[] parts = message.split(":", 2);
+            WaitingLobby.getInstance().addPlayer(parts[0], parts[1]);
+        }
+        WaitingLobby.getInstance().updateWindow();
+        parentwindow.changePanel(PanelType.WAITING_LOBBY);
+    }
+
     private void sendPlayerActions(MessageType messageType, String message) throws IOException {
-        buffer.clear();
-        message = messageType.name() + ":" + message;
-        buffer.put(message.getBytes());
-        buffer.flip();
-        clientChannel.write(buffer);
+
+        ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
+        clientChannel.write(tempBuffer);
 
         try {
-            Thread.sleep(50);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

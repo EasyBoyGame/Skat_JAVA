@@ -2,14 +2,17 @@ package org.example.client_server_system;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Server implements Runnable {
 
@@ -17,7 +20,8 @@ public class Server implements Runnable {
     Selector selector;
     ServerSocketChannel serverChannel;
     private int port;
-    private static List<SocketChannel> clients = new ArrayList<>();
+    private List<SocketChannel> clients = new ArrayList<>();
+    private HashMap<SocketChannel, String> players = new HashMap<>();
     private final int MAX_PLAYERS = 3;
 
     //Constructor
@@ -99,8 +103,16 @@ public class Server implements Runnable {
         String message = new String(bytes).trim();
         System.out.println("Received: " + message);
 
+        String[] messages = message.split("\n");
+        for (String msg : messages) {
+            processMessage(client, msg.trim());
+        }
+
+    }
+
+    private void processMessage(SocketChannel client, String trim) {
         // teilt Nachricht in Typ und Inhalt auf
-        String[] parts = message.split(":", 2);
+        String[] parts = trim.split(":", 2);
         if (parts.length < 2) return; // Nachrichtenformat ungültig
 
         MessageType messageType = MessageType.valueOf(parts[0]);
@@ -108,18 +120,55 @@ public class Server implements Runnable {
 
         // Verarbeitet unterschiedliche Typen von Nachrichten
         switch (messageType) {
+            case CONNECTION:
+                setMetaData(client, trim);
+                updateWaitingLobby();
+                break;
             case START_GAME:
                 System.out.println("BID yay " + content);
                 break;
             case CARD_PLAYED:
                 System.out.println(content);
                 break;
-            case UPDATE_LOBBY:
-                System.out.println("CHAT");
-                break;
             default:
                 System.out.println("Unknown message type.");
         }
+    }
+
+    private void updateWaitingLobby() {
+        for (SocketChannel client: clients) {
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            buffer.clear();
+            String message = MessageType.UPDATE_LOBBY.name() + ":" + socketListToString(players);
+            buffer.put(message.getBytes());
+            buffer.flip();
+            try {
+                client.write(buffer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void setMetaData(SocketChannel socketChannel, String message){
+        String[] parts = message.split(":", 2);
+        players.put(socketChannel, parts[1]);
+    }
+
+    // mit Chat
+    private String socketListToString(HashMap<SocketChannel, String> clients) {
+        return clients.entrySet().stream()
+                .map(entry -> {
+                    SocketChannel channel = entry.getKey();
+                    String username = entry.getValue(); // Get the username from the map
+                    try {
+                        InetSocketAddress remoteAddress = (InetSocketAddress) channel.getRemoteAddress();
+                        return username + ":" + remoteAddress.getAddress().getHostAddress();
+                    } catch (Exception e) {
+                        return username + " (Unknown Address)";
+                    }
+                })
+                .collect(Collectors.joining(", "));
     }
 
     @Override

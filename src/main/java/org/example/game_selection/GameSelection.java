@@ -12,7 +12,7 @@ public class GameSelection extends JFrame {
     private double ScreenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private double ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
-    private HashMap<PanelType, JPanel> panels = new HashMap<>();
+    public HashMap<PanelType, JPanel> panels = new HashMap<>();
     private JPanel currentPanel;
 
     public GameSelection() {
@@ -30,7 +30,7 @@ public class GameSelection extends JFrame {
         panels.put(PanelType.MAIN_MENU, new MainPanel(this));
         panels.put(PanelType.JOIN_GAME, new JoinPanel(this));
         panels.put(PanelType.HOST_GAME, new HostPanel(this));
-        panels.put(PanelType.WAITING_LOBBY, new WaitingLobby(this, null, null, 0));
+        panels.put(PanelType.WAITING_LOBBY, WaitingLobby.createInstance(this));
 
         changePanel(PanelType.MAIN_MENU);
 
@@ -49,20 +49,4 @@ public class GameSelection extends JFrame {
         repaint();
     }
 
-    public void changePanel(PanelType type, String username, InetAddress ip, int port){
-        if (currentPanel != null) {
-            remove(currentPanel);
-        }
-
-        if(type == PanelType.WAITING_LOBBY){
-            currentPanel = new WaitingLobby(this, username, ip, port);
-        }
-        else {
-            currentPanel = panels.get(type);
-        }
-
-        add(currentPanel);
-        revalidate();
-        repaint();
-    }
 }

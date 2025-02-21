@@ -7,27 +7,53 @@ import java.awt.*;
 import java.net.InetAddress;
 
 public class WaitingLobby extends JPanel {
+    private static WaitingLobby INSTANCE;
     private GameSelection parentWindow;
+    String[][] players = new String[3][2];
     private String username;
     private InetAddress ip;
     private int port;
+    private int connectedPlayers;
 
-    public WaitingLobby(GameSelection parentWindow, String username, InetAddress ip, int port){
+
+    private WaitingLobby(GameSelection parentWindow){
         this.parentWindow = parentWindow;
         parentWindow.setResizable(false);
-        this.username = username;
-        this.ip = ip;
-        this.port = port;
 
 
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
 
-        initButtons();
-        initLabels();
+        updateWindow();
         setVisible(true);
         revalidate();
         repaint();
+    }
+
+    public void updateWindow(){
+        this.removeAll();
+        initButtons();
+        initLabels();
+    }
+    public static WaitingLobby createInstance(GameSelection parentWindow){
+        if (INSTANCE == null){
+            return INSTANCE = new WaitingLobby(parentWindow);
+        }
+        return INSTANCE;
+    }
+
+    public static WaitingLobby getInstance(){
+        return INSTANCE;
+    }
+
+    public void addPlayer(String username, String ip){
+        players[connectedPlayers][0] = username;
+        players[connectedPlayers][1] = ip;
+        connectedPlayers++;
+    }
+
+    public void setPort(int port){
+        this.port = port;
     }
 
     private void initButtons() {
@@ -73,12 +99,12 @@ public class WaitingLobby extends JPanel {
         //region player one
         JLabel playerOne = new JLabel();
         playerOne.setBounds(parentWindow.getWidth() / 10, 80, 200, 50);
-        playerOne.setText(username);
+        playerOne.setText(players[0][0]);
 
         JLabel playerOneIp = new JLabel();
         playerOneIp.setEnabled(true);
         playerOneIp.setBounds(parentWindow.getWidth() / 10 * 3, 80, 150, 50);
-        playerOneIp.setText(String.valueOf(ip));
+        playerOneIp.setText(players[0][1]);
 
         JLabel playerOneNr = new JLabel();
         playerOneNr.setEnabled(true);
@@ -94,12 +120,12 @@ public class WaitingLobby extends JPanel {
         JLabel playerTwo = new JLabel();
         playerTwo.setEnabled(true);
         playerTwo.setBounds(parentWindow.getWidth() / 10, 150, 200, 50);
-        playerTwo.setText("SPIELER 2");
+        playerTwo.setText(players[1][0]);
 
         JLabel playerTwoIp = new JLabel();
         playerTwoIp.setEnabled(true);
         playerTwoIp.setBounds(parentWindow.getWidth() / 10 * 3, 150, 150, 50);
-        playerTwoIp.setText("SPIELER 2 - IP");
+        playerTwoIp.setText(players[1][1]);
 
         JLabel playerTwoNr = new JLabel();
         playerTwoNr.setEnabled(true);
@@ -115,12 +141,12 @@ public class WaitingLobby extends JPanel {
         JLabel playerThree = new JLabel();
         playerThree.setEnabled(true);
         playerThree.setBounds(parentWindow.getWidth() / 10, 220, 200, 50);
-        playerThree.setText("SPIELER 3");
+        playerThree.setText(players[2][0]);
 
         JLabel playerThreeIp = new JLabel();
         playerThreeIp.setEnabled(true);
         playerThreeIp.setBounds(parentWindow.getWidth() / 10 * 3, 220, 150, 50);
-        playerThreeIp.setText("SPIELER 3 - IP");
+        playerThreeIp.setText(players[2][1]);
 
         JLabel playerThreeNr = new JLabel();
         playerThreeNr.setEnabled(true);
