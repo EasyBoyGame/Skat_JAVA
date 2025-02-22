@@ -1,7 +1,11 @@
 package org.example.client_server_system;
 
+import org.example.game_selection.panels.PanelType;
+
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client {
@@ -40,7 +44,7 @@ public class Client {
     }
 
     private void joinWaitingLobby() {
-        
+
     }
 
 }
