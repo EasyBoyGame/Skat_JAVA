@@ -1,15 +1,12 @@
 package org.example.database;
 
-
-import javax.print.attribute.standard.DateTimeAtCreation;
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 public class DBHelper {
     private final String dbURL = "jdbc:sqlite:D:/Dokumente/Schule/2_EK_Informatik/sample.db";
 
+    // useless method (checks if a connection to the db is possible)
     public void connect(){
         try(Connection con = DriverManager.getConnection(dbURL)){
             System.out.println("Connection established!");
@@ -19,6 +16,8 @@ public class DBHelper {
         }
     }
 
+
+    // gets all tables (all games played) from db
     public void getTables(){
         String sql = "SELECT name FROM sqlite_master WHERE type='table'";
         try(Connection con = DriverManager.getConnection(dbURL);
@@ -53,6 +52,7 @@ public class DBHelper {
     }
 
 
+    // inserts/adds the results of every round
     public void setRoundResults(String tablename, int result1, int result2, int result3){
         // Null als Wert, da so AutoIncrement in SQLite implementiert werden kann
         String sql = "INSERT INTO \"" + tablename + "\" VALUES (NULL, ?,?,?)";
@@ -71,7 +71,7 @@ public class DBHelper {
     }
 
 
-    // jede Zeile auslesen und den Wert zusammenrechnen
+    // reading every line of database and counting points
     public int[] getGameResult(String tablename){
         String sql = "SELECT * FROM \"" + tablename + "\"";
         int resultU1 = 0;
