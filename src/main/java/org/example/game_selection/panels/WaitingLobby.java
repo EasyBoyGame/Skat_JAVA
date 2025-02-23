@@ -9,11 +9,11 @@ import java.net.InetAddress;
 public class WaitingLobby extends JPanel {
     private static WaitingLobby INSTANCE;
     private GameSelection parentWindow;
-    String[][] players = new String[3][2];
+    public String[][] players = new String[3][2];
     private String username;
     private InetAddress ip;
     private int port;
-    private int connectedPlayers;
+    public int connectedPlayers;
 
 
     private WaitingLobby(GameSelection parentWindow){
@@ -60,7 +60,9 @@ public class WaitingLobby extends JPanel {
         JButton startGame = new JButton("Start");
         startGame.setEnabled(true);
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
-        startGame.addActionListener(e -> System.out.println("BUTTON WORKS!"));
+        startGame.addActionListener(e -> {
+            //TODO hier weiter machen parentWindow.changePanel();
+        });
         add(startGame);
     }
 

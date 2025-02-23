@@ -8,10 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Server implements Runnable {
@@ -21,7 +18,7 @@ public class Server implements Runnable {
     ServerSocketChannel serverChannel;
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
-    private HashMap<SocketChannel, String> players = new HashMap<>();
+    private LinkedHashMap<SocketChannel, String> players = new LinkedHashMap<>();
     private final int MAX_PLAYERS = 3;
 
     //Constructor
@@ -156,7 +153,7 @@ public class Server implements Runnable {
     }
 
     // mit Chat
-    private String socketListToString(HashMap<SocketChannel, String> clients) {
+    private String socketListToString(LinkedHashMap<SocketChannel, String> clients) {
         return clients.entrySet().stream()
                 .map(entry -> {
                     SocketChannel channel = entry.getKey();
@@ -168,7 +165,7 @@ public class Server implements Runnable {
                         return username + " (Unknown Address)";
                     }
                 })
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(";"));
     }
 
     @Override

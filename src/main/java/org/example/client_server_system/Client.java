@@ -89,9 +89,11 @@ public class Client {
 
     private void updateWaitingLobby(String message) {
         WaitingLobby.getInstance().setPort(port);
-        String[] players = message.split(", ", 5);
+        String[] players = message.split(";", 5);
+        WaitingLobby.getInstance().players = new String[3][2];
+        WaitingLobby.getInstance().connectedPlayers = 0;
         for (String player: players) {
-            String[] parts = message.split(":", 2);
+            String[] parts = player.split(":", 2);
             WaitingLobby.getInstance().addPlayer(parts[0], parts[1]);
         }
         WaitingLobby.getInstance().updateWindow();

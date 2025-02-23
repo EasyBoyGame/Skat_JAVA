@@ -29,9 +29,9 @@ public class JoinPanel extends JPanel {
     }
 
     private void initWindow() {
-        createInputLabel(1, "Username:", textField1);
-        createInputLabel(2, "IP:", textField2);
-        createInputLabel(3, "Port:", textField3);
+        createInputLabel(1, "Username:", textField1 = new JTextField());
+        createInputLabel(2, "IP:", textField2 = new JTextField());
+        createInputLabel(3, "Port:", textField3 = new JTextField());
 
         initButton();
     }
@@ -71,7 +71,6 @@ public class JoinPanel extends JPanel {
         namePanel.add(label);
 
         // Textfeld zum JLabel
-        textField = new JTextField();
         textField.setBounds(panelWidth/4, 0, panelWidth/4*3, panelHeight);
         namePanel.add(textField);
 

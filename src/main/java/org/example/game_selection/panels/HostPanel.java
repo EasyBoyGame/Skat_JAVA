@@ -48,8 +48,8 @@ public class HostPanel extends JPanel {
             new Thread(server).start();
             try {
                 Thread.sleep(500);
-                Client client = new Client(username, "localhost", port, parentWindow);
-            } catch (InterruptedException ex) {
+                Client client = new Client(username, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+            } catch (InterruptedException | UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }
         });
