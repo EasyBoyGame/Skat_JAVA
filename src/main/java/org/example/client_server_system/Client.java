@@ -100,6 +100,7 @@ public class Client {
         parentwindow.changePanel(PanelType.WAITING_LOBBY);
     }
 
+  
     private void sendPlayerActions(MessageType messageType, String message) throws IOException {
 
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
