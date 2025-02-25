@@ -4,7 +4,8 @@ import java.sql.*;
 
 
 public class DBHelper {
-    private final String dbURL = "jdbc:sqlite:D:/Dokumente/Schule/2_EK_Informatik/sample.db";
+    //private final String dbURL = "jdbc:sqlite:D:/Dokumente/Schule/2_EK_Informatik/sample.db";
+    private final String dbURL = "jdbc:sqlite:G:/S23IN-eN/Projektarbeit/Projekt 2025/Skat - Tobias W., Julian, Arne, Tahir/results.db";
 
     // useless method (checks if a connection to the db is possible)
     public void connect(){
