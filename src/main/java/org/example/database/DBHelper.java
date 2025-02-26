@@ -2,9 +2,12 @@ package org.example.database;
 
 import java.sql.*;
 
-
+/**
+ * Dies ist ein DBHelper
+ * @param
+ */
 public class DBHelper {
-    private final String dbURL = "jdbc:sqlite:results.db";
+    private final String dbURL = "jdbc:sqlite:src/main/java/org/example/database/results.db";
 
     // useless method (checks if a connection to the db is possible)
     public void connect(){

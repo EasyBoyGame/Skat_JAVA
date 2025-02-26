@@ -62,6 +62,11 @@ public class WaitingLobby extends JPanel {
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
         startGame.addActionListener(e -> {
             //TODO hier weiter machen parentWindow.changePanel();
+
+
+
+
+
         });
         add(startGame);
     }
