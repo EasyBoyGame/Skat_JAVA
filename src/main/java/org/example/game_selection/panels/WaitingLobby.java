@@ -1,9 +1,12 @@
 package org.example.game_selection.panels;
 
+import org.example.client_server_system.Client;
+import org.example.client_server_system.MessageType;
 import org.example.game_selection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.net.InetAddress;
 
 public class WaitingLobby extends JPanel {
@@ -14,6 +17,7 @@ public class WaitingLobby extends JPanel {
     private InetAddress ip;
     private int port;
     public int connectedPlayers;
+    private Client client;
 
 
     private WaitingLobby(GameSelection parentWindow){
@@ -28,6 +32,10 @@ public class WaitingLobby extends JPanel {
         setVisible(true);
         revalidate();
         repaint();
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void updateWindow(){
@@ -62,11 +70,11 @@ public class WaitingLobby extends JPanel {
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
         startGame.addActionListener(e -> {
             //TODO hier weiter machen parentWindow.changePanel();
-
-
-
-
-
+            try {
+                client.sendPlayerActions(MessageType.START_GAME, "");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         add(startGame);
     }

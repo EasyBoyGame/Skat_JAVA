@@ -88,6 +88,7 @@ public class Client {
     }
 
     private void updateWaitingLobby(String message) {
+        WaitingLobby.getInstance().setClient(this);
         WaitingLobby.getInstance().setPort(port);
         String[] players = message.split(";", 5);
         WaitingLobby.getInstance().players = new String[3][2];
@@ -101,7 +102,7 @@ public class Client {
     }
 
   
-    private void sendPlayerActions(MessageType messageType, String message) throws IOException {
+    public void sendPlayerActions(MessageType messageType, String message) throws IOException {
 
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
         clientChannel.write(tempBuffer);
