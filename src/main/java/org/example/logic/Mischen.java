@@ -3,31 +3,30 @@ package org.example.logic;
 import java.util.*;
 
 public class Mischen {
-    public static List<Karte> shuffle() {
-        List<Karte> deck = kartenErstellen();
 
-        Collections.shuffle(deck);
+    List<Karte> deck;
+    public List<Karte> kartenSp1;
+    public List<Karte> kartenSp2;
+    public List<Karte> kartenSp3;
+    public List<Karte> skat;
 
-        List<Karte> spieler1 = new ArrayList<>(kartenSortieren(deck.subList(0, 10)));
-        List<Karte> spieler2 = new ArrayList<>(kartenSortieren(deck.subList(10, 20)));
-        List<Karte> spieler3 = new ArrayList<>(kartenSortieren(deck.subList(20, 30)));
-        List<Karte> skat = new ArrayList<>(kartenSortieren(deck.subList(30, 32)));
-
-        System.out.println("Spieler1:" + spieler1);
-        System.out.println("Spieler2:" + spieler2);
-        System.out.println("Spieler3:" + spieler3);
-        System.out.println("Skat:" + skat);
-
-        List<Karte> decksortiert = new ArrayList<>();
-        decksortiert.addAll(spieler1);
-        decksortiert.addAll(spieler2);
-        decksortiert.addAll(spieler3);
-        decksortiert.addAll(skat);
-
-        return decksortiert;
+    public Mischen() {
+        deck = kartenErstellen();
     }
 
-    private static List<Karte> kartenErstellen() {
+    public List<Karte> getKarten(int spieler){
+        switch (spieler){
+            case 1:
+                return kartenSp1;
+            case 2:
+                return kartenSp2;
+            case 3:
+                return kartenSp2;
+        }
+        return null;
+    }
+
+    public List<Karte> kartenErstellen() {
         List<Karte> deck = new ArrayList<>();
         for (Farbe farbe : Farbe.values()) {
             for (Kartenart kartenart : Kartenart.values()) {

@@ -3,28 +3,36 @@ package org.example.client_server_system;
 import org.example.game_selection.GameSelection;
 import org.example.game_selection.panels.PanelType;
 import org.example.game_selection.panels.WaitingLobby;
+import org.example.logic.Farbe;
+import org.example.logic.Karte;
+import org.example.logic.Kartenart;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Client {
 
     //Attribute
-    SocketChannel clientChannel;
-    ByteBuffer buffer;
-    String username;
-    String ip;
-    GameSelection parentwindow;
-    int port;
+    private SocketChannel clientChannel;
+    private ByteBuffer buffer;
+    private String username;
+    private String ip;
+    private GameSelection parentwindow;
+    private int port;
+    private GameWindow gameWindow;
+    private int playerTurn = 0;
 
     /**
      * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vomServer
+     *
      * @param username Name des Spielers im Spiel
-     * @param ip Addresse aus dem Intranet
-     * @param port Port des Servers mit dem man sich verbinden möchte
+     * @param ip       Addresse aus dem Intranet
+     * @param port     Port des Servers mit dem man sich verbinden möchte
      */
     public Client(String username, String ip, int port, GameSelection parentwindow) {
         this.username = username;
@@ -33,11 +41,7 @@ public class Client {
         this.parentwindow = parentwindow;
 
         initClient();
-        try {
-            sendPlayerActions(MessageType.CONNECTION, username);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        sendPlayerActions(MessageType.CONNECTION, username);
         startServerListenLoop();
     }
 
@@ -76,7 +80,7 @@ public class Client {
                         MessageType messageType = MessageType.valueOf(parts[0]);
                         String content = parts[1];
 
-                        switch (messageType){
+                        switch (messageType) {
                             case UPDATE_LOBBY -> updateWaitingLobby(content);
                         }
                     }
@@ -93,7 +97,7 @@ public class Client {
         String[] players = message.split(";", 5);
         WaitingLobby.getInstance().players = new String[3][2];
         WaitingLobby.getInstance().connectedPlayers = 0;
-        for (String player: players) {
+        for (String player : players) {
             String[] parts = player.split(":", 2);
             WaitingLobby.getInstance().addPlayer(parts[0], parts[1]);
         }
@@ -101,9 +105,8 @@ public class Client {
         parentwindow.changePanel(PanelType.WAITING_LOBBY);
     }
 
-  
-    public void sendPlayerActions(MessageType messageType, String message) throws IOException {
 
+    public void sendPlayerActions(MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
         clientChannel.write(tempBuffer);
 

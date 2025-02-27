@@ -1,5 +1,8 @@
 package org.example.client_server_system;
 
+import org.example.logic.Karte;
+import org.example.logic.Mischen;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.Buffer;
@@ -28,7 +31,7 @@ public class Server implements Runnable {
 
     private void initServer() {
         try {
-            // Erstellt selector um mehrere Clients mit non-Blocking I/O zu managen
+            // erstellt Selector, um mehrere Clients mit non-Blocking I/O zu managen
             selector = Selector.open();
             // TCP server socket channel sorgt für Verbindung zwischen Clients und Server
             serverChannel = ServerSocketChannel.open();
@@ -80,7 +83,7 @@ public class Server implements Runnable {
     }
 
     private void handlePlayerMove(SelectionKey key) throws IOException {
-        // ließt Nachricht vom Client
+        // liest Nachricht vom Client
         SocketChannel client = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         int bytesRead = client.read(buffer);
@@ -122,7 +125,11 @@ public class Server implements Runnable {
                 updateWaitingLobby();
                 break;
             case START_GAME:
-                System.out.println("BID yay " + content);
+                playerTurn = 0;
+                startGame();
+                break;
+            case REIZEN:
+                System.out.println("ES WURDE GEREIZT" + content);
                 break;
             case CARD_PLAYED:
                 System.out.println(content);
@@ -132,22 +139,34 @@ public class Server implements Runnable {
         }
     }
 
-    private void updateWaitingLobby() {
-        for (SocketChannel client: clients) {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            buffer.clear();
-            String message = MessageType.UPDATE_LOBBY.name() + ":" + socketListToString(players);
-            buffer.put(message.getBytes());
-            buffer.flip();
+    private void startGame() {
+        Mischen mischen = new Mischen();
+        int counter = 1;
+        for (SocketChannel client : clients) {
+
+            List<Karte> karten = new ArrayList<>(mischen.getKarten(counter));
+            StringBuilder builder = new StringBuilder();
+            for (Karte karte : karten) {
+                builder.append(karte).append(",");
+            }
+            sendServerMessage(MessageType.START_GAME, String.valueOf(builder));
+            counter++;
+        }
+    }
+
+
+    public void sendServerMessage(MessageType messageType, String message) {
+        for (SocketChannel client : clients) {
+            ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
             try {
-                client.write(buffer);
+                client.write(tempBuffer);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void setMetaData(SocketChannel socketChannel, String message){
+    private void setMetaData(SocketChannel socketChannel, String message) {
         String[] parts = message.split(":", 2);
         players.put(socketChannel, parts[1]);
     }

@@ -36,6 +36,9 @@ public class GameWindow extends JFrame {
     public GameWindow() {
         // Frame init
         super();
+        this.client = client;
+        this.deck = deck;
+        players = WaitingLobby.getInstance().players;
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         int frameWidth = 1286;
         int frameHeight = 592;
@@ -56,7 +59,7 @@ public class GameWindow extends JFrame {
         jButton1.setMargin(new Insets(2, 2, 2, 2));
         jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton1_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton1);
@@ -68,7 +71,7 @@ public class GameWindow extends JFrame {
         jButton2.setMargin(new Insets(2, 2, 2, 2));
         jButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton2_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton2);
@@ -78,7 +81,7 @@ public class GameWindow extends JFrame {
         jButton3.setMargin(new Insets(2, 2, 2, 2));
         jButton3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton3_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton3);
@@ -88,7 +91,7 @@ public class GameWindow extends JFrame {
         jButton4.setMargin(new Insets(2, 2, 2, 2));
         jButton4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton4_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton4);
@@ -98,7 +101,7 @@ public class GameWindow extends JFrame {
         jButton5.setMargin(new Insets(2, 2, 2, 2));
         jButton5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton5_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton5);
@@ -108,7 +111,7 @@ public class GameWindow extends JFrame {
         jButton6.setMargin(new Insets(2, 2, 2, 2));
         jButton6.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton6_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton6);
@@ -118,7 +121,7 @@ public class GameWindow extends JFrame {
         jButton7.setMargin(new Insets(2, 2, 2, 2));
         jButton7.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton7_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton7);
@@ -128,7 +131,7 @@ public class GameWindow extends JFrame {
         jButton8.setMargin(new Insets(2, 2, 2, 2));
         jButton8.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton8_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton8);
@@ -138,7 +141,7 @@ public class GameWindow extends JFrame {
         jButton9.setMargin(new Insets(2, 2, 2, 2));
         jButton9.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton9_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton9);
@@ -148,7 +151,7 @@ public class GameWindow extends JFrame {
         jButton10.setMargin(new Insets(2, 2, 2, 2));
         jButton10.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton10_ActionPerformed(evt);
+                buttonActionPerformed(evt);
             }
         });
         cp.add(jButton11);
@@ -178,86 +181,28 @@ public class GameWindow extends JFrame {
         cp.add(canvas4);
         canvas5.setBounds(1080, 100, 24, 73);
         cp.add(canvas5);
-        // Ende Komponenten
 
         setVisible(true);
-    } // end of public GUI
+    }
 
-    // Anfang Methoden
 
     public static void main(String[] args) {
         //new GUI();
-    } // end of main
+    }
 
-    public void jButton1_ActionPerformed(ActionEvent evt) {
-        jButton1.setVisible(false);
-        jButton1.setEnabled(false);
+    public void buttonActionPerformed(ActionEvent evt) {
+        int currentTurn = client.getPlayerTurn();
+        if (players[currentTurn][0].equals(client.getUsername())){
+            JButton button = (JButton) evt.getSource();
+            button.setVisible(false);
+            button.setEnabled(false);
+            client.sendPlayerActions(MessageType.CARD_PLAYED, button.getText());
+        } else {
+            JOptionPane.showMessageDialog(this, "Spieler " + players[currentTurn][0] + " ist am Zug!\nBitte warten");
+        }
         //gelegteKarte.addButtonText(jButton1.getText());
-
     }
 
-    public void jButton2_ActionPerformed(ActionEvent evt) {
-        jButton2.setVisible(false);
-        jButton2.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton2.getText());
-    }
-
-    public void jButton3_ActionPerformed(ActionEvent evt) {
-        jButton3.setVisible(false);
-        jButton3.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton3.getText());
-    }
-
-    public void jButton4_ActionPerformed(ActionEvent evt) {
-        jButton4.setVisible(false);
-        jButton4.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton4.getText());
-    }
-
-    public void jButton5_ActionPerformed(ActionEvent evt) {
-        jButton5.setVisible(false);
-        jButton5.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton5.getText());
-    }
-
-    public void jButton6_ActionPerformed(ActionEvent evt) {
-        jButton6.setVisible(false);
-        jButton6.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton6.getText());
-    }
-
-    public void jButton7_ActionPerformed(ActionEvent evt) {
-        jButton7.setVisible(false);
-        jButton7.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton7.getText());
-    }
-
-    public void jButton8_ActionPerformed(ActionEvent evt) {
-        jButton8.setVisible(false);
-        jButton8.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton8.getText());
-    }
-
-    public void jButton9_ActionPerformed(ActionEvent evt) {
-        jButton9.setVisible(false);
-        jButton9.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton9.getText());
-    }
-
-    public void jButton10_ActionPerformed(ActionEvent evt) {
-        jButton10.setVisible(false);
-        jButton10.setEnabled(false);
-
-        //gelegteKarte.addButtonText(jButton10.getText());
-    }
 
     public void jButton11_ActionPerformed(ActionEvent evt) {
 
