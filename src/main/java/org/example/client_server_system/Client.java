@@ -1,5 +1,6 @@
 package org.example.client_server_system;
 
+import org.example.game.GameWindow;
 import org.example.game_selection.GameSelection;
 import org.example.game_selection.panels.PanelType;
 import org.example.game_selection.panels.WaitingLobby;
@@ -82,6 +83,8 @@ public class Client {
 
                         switch (messageType) {
                             case UPDATE_LOBBY -> updateWaitingLobby(content);
+                            case START_GAME -> startGame(content);
+                            case CARD_PLAYED -> playerTurn = Integer.parseInt(content);
                         }
                     }
                 }
@@ -89,6 +92,16 @@ public class Client {
                 System.out.println("Disconnected from server.");
             }
         }).start();
+    }
+
+    private void startGame(String message) {
+        String[] cards = message.split(",");
+        List<Karte> deck = new ArrayList<>();
+        for (String card : cards) {
+            String[] parts = card.split(" ");
+            deck.add(new Karte(Farbe.valueOf(parts[0]), Kartenart.valueOf(parts[1])));
+        }
+        gameWindow = new GameWindow(deck, this);
     }
 
     private void updateWaitingLobby(String message) {
@@ -108,13 +121,19 @@ public class Client {
 
     public void sendPlayerActions(MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
-        clientChannel.write(tempBuffer);
 
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
+            clientChannel.write(tempBuffer);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public int getPlayerTurn() {
+        return playerTurn;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }

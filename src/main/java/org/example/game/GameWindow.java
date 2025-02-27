@@ -1,5 +1,8 @@
 package org.example.game;
 
+import org.example.client_server_system.Client;
+import org.example.client_server_system.MessageType;
+import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.Karte;
 import org.example.logic.Mischen;
 
@@ -7,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.List;
 
 public class GameWindow extends JFrame {
@@ -29,11 +33,12 @@ public class GameWindow extends JFrame {
     private JLabel jLabel2 = new JLabel();
     private Canvas canvas4 = new Canvas();
     private Canvas canvas5 = new Canvas();
-    Mischen mischen = new Mischen();
-    List<Karte> deck = mischen.shuffle();
+    private List<Karte> deck;
+    private Client client;
+    private String[][] players;
     // Ende Attribute
 
-    public GameWindow() {
+    public GameWindow(List<Karte> deck, Client client) {
         // Frame init
         super();
         this.client = client;

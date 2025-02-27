@@ -4,5 +4,6 @@ public enum MessageType {
     CONNECTION,
     START_GAME,
     UPDATE_LOBBY,
-    CARD_PLAYED
+    CARD_PLAYED,
+    REIZEN
 }

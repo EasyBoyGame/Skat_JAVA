@@ -23,6 +23,7 @@ public class Server implements Runnable {
     private List<SocketChannel> clients = new ArrayList<>();
     private LinkedHashMap<SocketChannel, String> players = new LinkedHashMap<>();
     private final int MAX_PLAYERS = 3;
+    private int playerTurn;
 
     //Constructor
     public Server(int port) {
@@ -122,7 +123,7 @@ public class Server implements Runnable {
         switch (messageType) {
             case CONNECTION:
                 setMetaData(client, trim);
-                updateWaitingLobby();
+                sendServerMessage(MessageType.UPDATE_LOBBY, socketListToString(players));
                 break;
             case START_GAME:
                 playerTurn = 0;
@@ -132,7 +133,11 @@ public class Server implements Runnable {
                 System.out.println("ES WURDE GEREIZT" + content);
                 break;
             case CARD_PLAYED:
-                System.out.println(content);
+                if (playerTurn < 30) {
+                    sendServerMessage(MessageType.CARD_PLAYED, "" + playerTurn % 3);
+                    System.out.println(content);
+                    playerTurn++;
+                }
                 break;
             default:
                 System.out.println("Unknown message type.");

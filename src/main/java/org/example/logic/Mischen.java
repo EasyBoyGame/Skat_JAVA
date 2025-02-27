@@ -33,6 +33,12 @@ public class Mischen {
                 deck.add(new Karte(farbe, kartenart));
             }
         }
+        Collections.shuffle(deck);
+
+        kartenSp1 = kartenSortieren(deck.subList(0 ,10));
+        kartenSp2 = kartenSortieren(deck.subList(10 ,20));
+        kartenSp3 = kartenSortieren(deck.subList(20 ,30));
+        skat = kartenSortieren(deck.subList(30, 32));
         return deck;
     }
 
