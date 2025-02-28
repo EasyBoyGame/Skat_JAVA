@@ -126,7 +126,7 @@ public class Server implements Runnable {
                 sendServerMessage(MessageType.UPDATE_LOBBY, socketListToString(players));
                 break;
             case START_GAME:
-                playerTurn = 0;
+                playerTurn = 1;
                 startGame();
                 break;
             case REIZEN:
@@ -154,7 +154,12 @@ public class Server implements Runnable {
             for (Karte karte : karten) {
                 builder.append(karte).append(",");
             }
-            sendServerMessage(MessageType.START_GAME, String.valueOf(builder));
+            ByteBuffer tempBuffer = ByteBuffer.wrap((MessageType.START_GAME.name() + ":" + String.valueOf(builder) + "\n").getBytes());
+            try {
+                client.write(tempBuffer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             counter++;
         }
     }

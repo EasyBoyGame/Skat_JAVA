@@ -21,7 +21,7 @@ public class Mischen {
             case 2:
                 return kartenSp2;
             case 3:
-                return kartenSp2;
+                return kartenSp3;
         }
         return null;
     }
@@ -39,6 +39,7 @@ public class Mischen {
         kartenSp2 = kartenSortieren(deck.subList(10 ,20));
         kartenSp3 = kartenSortieren(deck.subList(20 ,30));
         skat = kartenSortieren(deck.subList(30, 32));
+        System.out.println(skat);
         return deck;
     }
 
