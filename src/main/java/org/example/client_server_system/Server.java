@@ -25,6 +25,13 @@ public class Server implements Runnable {
     private final int MAX_PLAYERS = 3;
     private int playerTurn;
 
+
+    @Override
+    public void run() {
+        initServer();
+        startServerLoop();
+    }
+
     //Constructor
     public Server(int port) {
         this.port = port;
@@ -181,26 +188,21 @@ public class Server implements Runnable {
         players.put(socketChannel, parts[1]);
     }
 
-    // mit Chat
-    private String socketListToString(LinkedHashMap<SocketChannel, String> clients) {
-        return clients.entrySet().stream()
-                .map(entry -> {
-                    SocketChannel channel = entry.getKey();
-                    String username = entry.getValue(); // Get the username from the map
-                    try {
-                        InetSocketAddress remoteAddress = (InetSocketAddress) channel.getRemoteAddress();
-                        return username + ":" + remoteAddress.getAddress().getHostAddress();
-                    } catch (Exception e) {
-                        return username + " (Unknown Address)";
-                    }
-                })
-                .collect(Collectors.joining(";"));
+
+    private String socketListToString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < clients.size(); i++) {
+            try {
+                InetSocketAddress inetAddress = (InetSocketAddress) clients.get(i).getRemoteAddress();
+                builder.append(usernames.get(i)).append(":").append(inetAddress.getAddress().getHostAddress()).append(";");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return builder.toString();
     }
 
-    @Override
-    public void run() {
-        initServer();
-        startServerLoop();
-    }
+
 
 }

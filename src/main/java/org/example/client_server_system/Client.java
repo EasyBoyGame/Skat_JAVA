@@ -111,6 +111,7 @@ public class Client {
         WaitingLobby.getInstance().players = new String[3][2];
         WaitingLobby.getInstance().connectedPlayers = 0;
         for (String player : players) {
+            if(player.isEmpty()) continue;
             String[] parts = player.split(":", 2);
             WaitingLobby.getInstance().addPlayer(parts[0], parts[1]);
         }

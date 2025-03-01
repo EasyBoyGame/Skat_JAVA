@@ -4,5 +4,7 @@ public enum Farbe {
     KARO,
     HERZ,
     PIK,
-    KREUZ
+    KREUZ,
+    GRAND,
+    NULL
 }
