@@ -4,6 +4,7 @@ import org.example.logic.Karte;
 import org.example.logic.Mischen;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -21,7 +22,7 @@ public class Server implements Runnable {
     ServerSocketChannel serverChannel;
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
-    private LinkedHashMap<SocketChannel, String> players = new LinkedHashMap<>();
+    private List<String> usernames = new ArrayList<>();
     private final int MAX_PLAYERS = 3;
     private int playerTurn;
 
@@ -130,7 +131,7 @@ public class Server implements Runnable {
         switch (messageType) {
             case CONNECTION:
                 setMetaData(client, trim);
-                sendServerMessage(MessageType.UPDATE_LOBBY, socketListToString(players));
+                sendServerMessage(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
             case START_GAME:
                 playerTurn = 1;
@@ -185,7 +186,7 @@ public class Server implements Runnable {
 
     private void setMetaData(SocketChannel socketChannel, String message) {
         String[] parts = message.split(":", 2);
-        players.put(socketChannel, parts[1]);
+        usernames.add(parts[1]);
     }
 
 

@@ -4,13 +4,12 @@ import org.example.client_server_system.Client;
 import org.example.client_server_system.MessageType;
 import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.Karte;
-import org.example.logic.Mischen;
+import org.example.logic.spielAuswahl;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.List;
 
 public class GameWindow extends JFrame {
@@ -38,7 +37,8 @@ public class GameWindow extends JFrame {
     private List<Karte> deck;
     private Client client;
     private String[][] players;
-    // Ende Attribute
+    private boolean reizen = true;
+
 
     public GameWindow(List<Karte> deck, Client client) {
         super();
@@ -125,11 +125,7 @@ public class GameWindow extends JFrame {
         jButton11.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton11.setText("Skat aufnehmen");
         jButton11.setMargin(new Insets(2, 2, 2, 2));
-        jButton11.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jButton11_ActionPerformed(evt);
-            }
-        });
+        jButton11.addActionListener(this::jButton11_ActionPerformed);
         cp.add(jButton11);
 
         //region Buttons Skat
@@ -181,6 +177,23 @@ public class GameWindow extends JFrame {
         setVisible(true);
     }
 
+    public void updateButtonText() {
+            jButton1.setText(deck.get(0).toString());
+            jButton2.setText(deck.get(1).toString());
+            jButton3.setText(deck.get(2).toString());
+            jButton4.setText(deck.get(3).toString());
+            jButton5.setText(deck.get(4).toString());
+            jButton6.setText(deck.get(5).toString());
+            jButton7.setText(deck.get(6).toString());
+            jButton8.setText(deck.get(7).toString());
+            jButton9.setText(deck.get(8).toString());
+            jButton10.setText(deck.get(9).toString());
+            if (jButton11.isVisible()) {
+                jButton11.setText(deck.get(10).toString());
+                jButton12.setText(deck.get(11).toString());
+            }
+    }
+
     public void buttonActionPerformed(ActionEvent evt) {
         if (reizen) return;
         int currentTurn = client.getPlayerTurn();
@@ -204,23 +217,12 @@ public class GameWindow extends JFrame {
     public void setReizen(boolean bool){
         reizen = bool;
     }
-
-    public void buttonActionPerformed(ActionEvent evt) {
-        int currentTurn = client.getPlayerTurn();
-        if (players[currentTurn][0].equals(client.getUsername())){
-            JButton button = (JButton) evt.getSource();
-            button.setVisible(false);
-            button.setEnabled(false);
-            client.sendPlayerActions(MessageType.CARD_PLAYED, button.getText());
-        } else {
-            JOptionPane.showMessageDialog(this, "Spieler " + players[currentTurn][0] + " ist am Zug!\nBitte warten");
-        }
-        //gelegteKarte.addButtonText(jButton1.getText());
+    public void setDeck(List<Karte> deck){
+        this.deck = deck;
     }
 
-
-    public void jButton11_ActionPerformed(ActionEvent evt) {
-
+    public List<Karte> getDeck(){
+        return deck;
     }
 
     public void enableButton() {
