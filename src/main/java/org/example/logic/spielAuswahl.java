@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class spielAuswahl extends JFrame{
@@ -29,7 +31,7 @@ public class spielAuswahl extends JFrame{
         super();
         this.gameWindow = gameWindow;
         deck = gameWindow.getDeck();
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         int frameWidth = 520;
         int frameHeight = 242;
         setSize(frameWidth, frameHeight);
@@ -49,7 +51,7 @@ public class spielAuswahl extends JFrame{
         jButton1.setMargin(new Insets(2, 2, 2, 2));
         jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton1_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.KREUZ);
             }
         });
         cp.add(jButton1);
@@ -59,7 +61,7 @@ public class spielAuswahl extends JFrame{
         jButton2.setMargin(new Insets(2, 2, 2, 2));
         jButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton2_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.PIK);
             }
         });
         cp.add(jButton2);
@@ -69,7 +71,7 @@ public class spielAuswahl extends JFrame{
         jButton3.setMargin(new Insets(2, 2, 2, 2));
         jButton3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton3_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.HERZ);
             }
         });
         cp.add(jButton3);
@@ -79,7 +81,7 @@ public class spielAuswahl extends JFrame{
         jButton4.setMargin(new Insets(2, 2, 2, 2));
         jButton4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton4_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.KARO);
             }
         });
         cp.add(jButton4);
@@ -89,7 +91,7 @@ public class spielAuswahl extends JFrame{
         jButton5.setMargin(new Insets(2, 2, 2, 2));
         jButton5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton5_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.GRAND);
             }
         });
         cp.add(jButton5);
@@ -99,7 +101,7 @@ public class spielAuswahl extends JFrame{
         jButton6.setMargin(new Insets(2, 2, 2, 2));
         jButton6.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton6_ActionPerformed(evt);
+                buttonActionPerformed(evt, Farbe.NULL);
             }
         });
         cp.add(jButton6);
@@ -161,9 +163,14 @@ public class spielAuswahl extends JFrame{
         jButton9.setVisible(true);
         jButton9.setEnabled(true);
         gameWindow.enableButton();
-        // TODO HIER BITTE
+
+        // Skat wird zum Kartendeck hinzugefügt
+        List<Karte> deck = gameWindow.getDeck();
+        deck.addAll(gameWindow.getSkat());
+        gameWindow.setDeck(deck);
         //GUI.dec1.addAll(GUI.decskat);
 
+        spielmodus = Farbe.KREUZ;
         switch (spielmodus) {
             case KREUZ:
             case GRAND:
@@ -181,8 +188,6 @@ public class spielAuswahl extends JFrame{
             case NULL:
                 gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.NULL));
                 break;
-            default:
-                throw new IllegalArgumentException("Ungültiger Spielmodus: " + spielmodus);
         }
 
         gameWindow.updateButtonText();
@@ -191,17 +196,29 @@ public class spielAuswahl extends JFrame{
 
     // Button Handspiel ansagen
     public void jButton8_ActionPerformed(ActionEvent evt) {
-        setVisible(false);
-        setEnabled(false);
-        gameWindow.setReizen(false);//GUI.spielstart = true;
+        if (spielmodus == null){
+            JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
+            return;
+        }
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        //setVisible(false);
+        //setEnabled(false);
+        gameWindow.setSpielstart(true);//GUI.spielstart = true;
     }
 
 
     // Button Spiel ansagen
     public void jButton9_ActionPerformed(ActionEvent evt) {
-        setVisible(false);
-        setEnabled(false);
-        gameWindow.setReizen(false);//GUI.spielstart = true;
+        if (spielmodus == null){
+            JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
+            return;
+        }
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        //setVisible(false);
+        //setEnabled(false);
+        gameWindow.setSpielstart(true);//GUI.spielstart = true;
     }
 
 

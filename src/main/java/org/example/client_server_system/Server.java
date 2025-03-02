@@ -166,8 +166,13 @@ public class Server implements Runnable {
         for (SocketChannel client : clients) {
 
             List<Karte> karten = new ArrayList<>(mischen.getKarten(counter));
+            List<Karte> skat = new ArrayList<>(mischen.getKarten(4));
             StringBuilder builder = new StringBuilder();
             for (Karte karte : karten) {
+                builder.append(karte).append(",");
+            }
+            builder.append(":");    // ':' zur Trennung von Skat und den Spielkarten
+            for (Karte karte: skat) {
                 builder.append(karte).append(",");
             }
             ByteBuffer tempBuffer = ByteBuffer.wrap((MessageType.START_GAME.name() + ":" + String.valueOf(builder) + "\n").getBytes());

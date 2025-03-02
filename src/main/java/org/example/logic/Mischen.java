@@ -35,6 +35,7 @@ public class Mischen {
     public List<Karte> kartenErstellen() {
         List<Karte> deck = new ArrayList<>();
         for (Farbe farbe : Farbe.values()) {
+            if (farbe == Farbe.GRAND || farbe == Farbe.NULL) continue;
             for (Kartenart kartenart : Kartenart.values()) {
                 deck.add(new Karte(farbe, kartenart));
             }

@@ -9,7 +9,6 @@ import org.example.logic.spielAuswahl;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class GameWindow extends JFrame {
@@ -35,15 +34,18 @@ public class GameWindow extends JFrame {
     private JLabel jLabel1 = new JLabel();
     private JLabel jLabel2 = new JLabel();
     private List<Karte> deck;
+    private List<Karte> skat;
     private Client client;
     private String[][] players;
     private boolean reizen = true;
+    private boolean spielstart = false;
 
 
     public GameWindow(List<Karte> deck, List<Karte> skat, Client client) {
         super();
         this.client = client;
         this.deck = deck;
+        this.skat = skat;
         players = WaitingLobby.getInstance().players;
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         int frameWidth = 1286;
@@ -59,61 +61,61 @@ public class GameWindow extends JFrame {
         cp.setLayout(null);
 
         //region Karten
-        jButton1.setBounds(112, 440, 105, 73);
+        jButton1.setBounds(12, 401, 93, 141);
         jButton1.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton1.setText(deck.get(0).toString());
         jButton1.setMargin(new Insets(2, 2, 2, 2));
         jButton1.addActionListener(this::buttonActionPerformed);
         cp.add(jButton1);
-        jButton2.setBounds(224, 440, 105, 73);
+        jButton2.setBounds(111, 401, 93, 141);
         jButton2.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton2.setText(deck.get(1).toString());
         jButton2.setMargin(new Insets(2, 2, 2, 2));
         jButton2.addActionListener(this::buttonActionPerformed);
         cp.add(jButton2);
-        jButton3.setBounds(336, 440, 105, 73);
+        jButton3.setBounds(210, 401, 93, 141);
         jButton3.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton3.setText(deck.get(2).toString());
         jButton3.setMargin(new Insets(2, 2, 2, 2));
         jButton3.addActionListener(this::buttonActionPerformed);
         cp.add(jButton3);
-        jButton4.setBounds(448, 440, 105, 73);
+        jButton4.setBounds(309, 401, 93, 141);
         jButton4.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton4.setText(deck.get(3).toString());
         jButton4.setMargin(new Insets(2, 2, 2, 2));
         jButton4.addActionListener(this::buttonActionPerformed);
         cp.add(jButton4);
-        jButton5.setBounds(560, 440, 105, 73);
+        jButton5.setBounds(408, 401, 93, 141);
         jButton5.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton5.setText(deck.get(4).toString());
         jButton5.setMargin(new Insets(2, 2, 2, 2));
         jButton5.addActionListener(this::buttonActionPerformed);
         cp.add(jButton5);
-        jButton6.setBounds(672, 440, 105, 73);
+        jButton6.setBounds(507, 401, 93, 141);
         jButton6.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton6.setText(deck.get(5).toString());
         jButton6.setMargin(new Insets(2, 2, 2, 2));
         jButton6.addActionListener(this::buttonActionPerformed);
         cp.add(jButton6);
-        jButton7.setBounds(784, 440, 105, 73);
+        jButton7.setBounds(606, 401, 93, 141);
         jButton7.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton7.setText(deck.get(6).toString());
         jButton7.setMargin(new Insets(2, 2, 2, 2));
         jButton7.addActionListener(this::buttonActionPerformed);
         cp.add(jButton7);
-        jButton8.setBounds(896, 440, 105, 73);
+        jButton8.setBounds(705, 401, 93, 141);
         jButton8.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton8.setText(deck.get(7).toString());
         jButton8.setMargin(new Insets(2, 2, 2, 2));
         jButton8.addActionListener(this::buttonActionPerformed);
         cp.add(jButton8);
-        jButton9.setBounds(1008, 440, 105, 73);
+        jButton9.setBounds(804, 401, 93, 141);
         jButton9.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton9.setText(deck.get(8).toString());
         jButton9.setMargin(new Insets(2, 2, 2, 2));
         jButton9.addActionListener(this::buttonActionPerformed);
         cp.add(jButton9);
-        jButton10.setBounds(1120, 440, 105, 73);
+        jButton10.setBounds(903, 401, 93, 141);
         jButton10.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton10.setText(deck.get(9).toString());
         jButton10.setMargin(new Insets(2, 2, 2, 2));
@@ -121,15 +123,17 @@ public class GameWindow extends JFrame {
         cp.add(jButton10);
         //endregion
 
-        jButton11.setBounds(820, 260, 105, 73);
+        jButton11.setBounds(1002, 401, 93, 141);
         jButton11.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton11.setText("Skat aufnehmen");
+        jButton11.setText(skat.get(0).toString());
         jButton11.setMargin(new Insets(2, 2, 2, 2));
-        jButton11.addActionListener(this::jButton11_ActionPerformed);
+        jButton11.addActionListener(this::buttonActionPerformed);
+        jButton11.setVisible(false);
+        jButton11.setEnabled(false);
         cp.add(jButton11);
 
         //region Buttons Skat
-        jButton12.setBounds(1080, 300, 105, 73);
+        jButton12.setBounds(1101, 401, 93, 141);
         jButton12.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton12.setText(skat.get(1).toString());
         jButton12.setMargin(new Insets(2, 2, 2, 2));
@@ -138,13 +142,11 @@ public class GameWindow extends JFrame {
         jButton12.setVisible(false);
         cp.add(jButton12);
 
-        jButton13.setBounds(1101, 401, 93, 141);
+        jButton13.setBounds(820, 260, 105, 73);
         jButton13.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton13.setText("Spielauswahl");
         jButton13.setMargin(new Insets(2, 2, 2, 2));
-        jButton13.addActionListener(this::buttonActionPerformed);
-        jButton13.setVisible(false);
-        jButton13.setEnabled(false);
+        jButton13.addActionListener(this::spielauswahl_ActionPerformed);
         cp.add(jButton13);
 
         //endregion
@@ -198,7 +200,7 @@ public class GameWindow extends JFrame {
 
 
     public void buttonActionPerformed(ActionEvent evt) {
-        if (reizen) return;
+        if (!spielstart) return;
         int currentTurn = client.getPlayerTurn();
         if (players[currentTurn][0].equals(client.getUsername())) {
             JButton button = (JButton) evt.getSource();
@@ -211,7 +213,8 @@ public class GameWindow extends JFrame {
     }
 
 
-    public void jButton11_ActionPerformed(ActionEvent evt) {
+    public void spielauswahl_ActionPerformed(ActionEvent evt) {
+        if (!reizen) return;
         spielAuswahl spielAuswahl = new spielAuswahl(this);
     }
 

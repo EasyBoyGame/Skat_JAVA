@@ -100,13 +100,20 @@ public class Client {
 
 
     private void startGame(String message) {
-        String[] cards = message.split(",");
-        List<Karte> deck = new ArrayList<>();
+        String[] decks = message.split(":");    // alle übergebenen Karten
+        String[] cards = decks[0].split(",");   // alle Spielkarten
+        String[] skats = decks[1].split(",");   // der Skat
+        List<Karte> deck = new ArrayList<>();         // Spielkarten als Liste
+        List<Karte> skat = new ArrayList<>();         // Skat als Liste
         for (String card : cards) {
             String[] parts = card.split(" ");
             deck.add(new Karte(Farbe.valueOf(parts[0]), Kartenart.valueOf(parts[1])));
         }
-        gameWindow = new GameWindow(deck, this);
+        for (String card : skats) {
+            String[] parts = card.split(" ");
+            skat.add(new Karte(Farbe.valueOf(parts[0]), Kartenart.valueOf(parts[1])));
+        }
+        gameWindow = new GameWindow(deck, skat, this);
     }
 
 
