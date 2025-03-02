@@ -28,6 +28,8 @@ public class Client {
     private GameWindow gameWindow;
     private int playerTurn = 0;
 
+
+
     /**
      * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vomServer
      *
@@ -46,6 +48,7 @@ public class Client {
         startServerListenLoop();
     }
 
+
     private void initClient() {
         try {
             clientChannel = SocketChannel.open(new InetSocketAddress(ip, port));
@@ -57,6 +60,7 @@ public class Client {
             throw new RuntimeException(e);
         }
     }
+
 
     private void startServerListenLoop() {
         new Thread(() -> {
@@ -94,6 +98,7 @@ public class Client {
         }).start();
     }
 
+
     private void startGame(String message) {
         String[] cards = message.split(",");
         List<Karte> deck = new ArrayList<>();
@@ -103,6 +108,7 @@ public class Client {
         }
         gameWindow = new GameWindow(deck, this);
     }
+
 
     private void updateWaitingLobby(String message) {
         WaitingLobby.getInstance().setClient(this);
@@ -130,9 +136,11 @@ public class Client {
         }
     }
 
+
     public int getPlayerTurn() {
         return playerTurn;
     }
+
 
     public String getUsername() {
         return username;

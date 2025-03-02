@@ -9,13 +9,14 @@ import java.sql.*;
 public class DBHelper {
     private final String dbURL = "jdbc:sqlite:src/main/java/org/example/database/results.db";
 
-    // useless method (checks if a connection to the db is possible)
+    // check if database is available
     public void connect(){
         try(Connection con = DriverManager.getConnection(dbURL)){
-            System.out.println("Connection established!");
+            System.out.println("Connection to database established!");
         }
         catch (SQLException ex){
             ex.printStackTrace();
+            System.out.println("Connection to database could not be established!");
         }
     }
 
@@ -43,7 +44,6 @@ public class DBHelper {
                 "\"" + username1 + "\" INT NOT NULL DEFAULT 0, " + // "\" wird genutzt, um den Einschub des Strings als Teil des sql-String zu machen
                 "\"" + username2 + "\" INT NOT NULL DEFAULT 0, " +
                 "\"" + username3 + "\" INT NOT NULL DEFAULT 0)";
-
 
         try (Connection con = DriverManager.getConnection(dbURL);
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -97,5 +97,3 @@ public class DBHelper {
         return new int[]{resultU1, resultU2, resultU3};
     }
 }
-
-

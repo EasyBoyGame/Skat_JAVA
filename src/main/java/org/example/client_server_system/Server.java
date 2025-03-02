@@ -27,16 +27,19 @@ public class Server implements Runnable {
     private int playerTurn;
 
 
+
     @Override
     public void run() {
         initServer();
         startServerLoop();
     }
 
+
     //Constructor
     public Server(int port) {
         this.port = port;
     }
+
 
     private void initServer() {
         try {
@@ -53,6 +56,7 @@ public class Server implements Runnable {
             throw new RuntimeException(e);
         }
     }
+
 
     private void startServerLoop() {
         try {
@@ -79,6 +83,7 @@ public class Server implements Runnable {
         }
     }
 
+
     private void acceptPlayer(Selector selector, ServerSocketChannel serverChannel) throws IOException {
         if (clients.size() >= MAX_PLAYERS) return; // nicht mehr als 3 Spieler
 
@@ -90,6 +95,7 @@ public class Server implements Runnable {
 
         System.out.println("Player connected: " + client.getRemoteAddress());
     }
+
 
     private void handlePlayerMove(SelectionKey key) throws IOException {
         // liest Nachricht vom Client
@@ -118,6 +124,7 @@ public class Server implements Runnable {
         }
 
     }
+
 
     private void processMessage(SocketChannel client, String trim) {
         // teilt Nachricht in Typ und Inhalt auf
@@ -152,6 +159,7 @@ public class Server implements Runnable {
         }
     }
 
+
     private void startGame() {
         Mischen mischen = new Mischen();
         int counter = 1;
@@ -184,6 +192,7 @@ public class Server implements Runnable {
         }
     }
 
+
     private void setMetaData(SocketChannel socketChannel, String message) {
         String[] parts = message.split(":", 2);
         usernames.add(parts[1]);
@@ -203,7 +212,4 @@ public class Server implements Runnable {
 
         return builder.toString();
     }
-
-
-
 }

@@ -14,19 +14,19 @@ import java.util.List;
 
 public class GameWindow extends JFrame {
 
-    private JButton jButton1 = new JButton();
-    private JButton jButton2 = new JButton();
-    private JButton jButton3 = new JButton();
-    private JButton jButton4 = new JButton();
-    private JButton jButton5 = new JButton();
-    private JButton jButton6 = new JButton();
-    private JButton jButton7 = new JButton();
-    private JButton jButton8 = new JButton();
-    private JButton jButton9 = new JButton();
-    private JButton jButton10 = new JButton();
-    private JButton jButton11 = new JButton();
-    private JButton jButton12 = new JButton();
-    private JButton jButton13 = new JButton();
+    private JButton jButton1 = new JButton();   // deck Karte 1
+    private JButton jButton2 = new JButton();   // deck Karte 2
+    private JButton jButton3 = new JButton();   // deck Karte 3
+    private JButton jButton4 = new JButton();   // deck Karte 4
+    private JButton jButton5 = new JButton();   // deck Karte 5
+    private JButton jButton6 = new JButton();   // deck Karte 6
+    private JButton jButton7 = new JButton();   // deck Karte 7
+    private JButton jButton8 = new JButton();   // deck Karte 8
+    private JButton jButton9 = new JButton();   // deck Karte 9
+    private JButton jButton10 = new JButton();  // deck Karte 10
+    private JButton jButton11 = new JButton();  // Skat Karte 1
+    private JButton jButton12 = new JButton();  // Skat Karte 2
+    private JButton jButton13 = new JButton();  // Spielauswahl
     private Canvas canvas1 = new Canvas();
     private Canvas canvas2 = new Canvas();
     private Canvas canvas3 = new Canvas();
@@ -40,7 +40,7 @@ public class GameWindow extends JFrame {
     private boolean reizen = true;
 
 
-    public GameWindow(List<Karte> deck, Client client) {
+    public GameWindow(List<Karte> deck, List<Karte> skat, Client client) {
         super();
         this.client = client;
         this.deck = deck;
@@ -131,7 +131,7 @@ public class GameWindow extends JFrame {
         //region Buttons Skat
         jButton12.setBounds(1080, 300, 105, 73);
         jButton12.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton12.setText("gereizt");
+        jButton12.setText(skat.get(1).toString());
         jButton12.setMargin(new Insets(2, 2, 2, 2));
         jButton12.addActionListener(this::buttonActionPerformed);
         jButton12.setEnabled(false);
@@ -140,7 +140,7 @@ public class GameWindow extends JFrame {
 
         jButton13.setBounds(1101, 401, 93, 141);
         jButton13.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton13.setText(deck.get(31).toString());
+        jButton13.setText("Spielauswahl");
         jButton13.setMargin(new Insets(2, 2, 2, 2));
         jButton13.addActionListener(this::buttonActionPerformed);
         jButton13.setVisible(false);
@@ -172,32 +172,35 @@ public class GameWindow extends JFrame {
         jLabel2.setText("Spieler 3");
         cp.add(jLabel2);
         //endregion
-        
+
         updateButtonText();
         setVisible(true);
     }
 
+
+    // Buttonname → wird zu jeweiliger Karte umbenannt
     public void updateButtonText() {
-            jButton1.setText(deck.get(0).toString());
-            jButton2.setText(deck.get(1).toString());
-            jButton3.setText(deck.get(2).toString());
-            jButton4.setText(deck.get(3).toString());
-            jButton5.setText(deck.get(4).toString());
-            jButton6.setText(deck.get(5).toString());
-            jButton7.setText(deck.get(6).toString());
-            jButton8.setText(deck.get(7).toString());
-            jButton9.setText(deck.get(8).toString());
-            jButton10.setText(deck.get(9).toString());
-            if (jButton11.isVisible()) {
-                jButton11.setText(deck.get(10).toString());
-                jButton12.setText(deck.get(11).toString());
-            }
+        jButton1.setText(deck.get(0).toString());
+        jButton2.setText(deck.get(1).toString());
+        jButton3.setText(deck.get(2).toString());
+        jButton4.setText(deck.get(3).toString());
+        jButton5.setText(deck.get(4).toString());
+        jButton6.setText(deck.get(5).toString());
+        jButton7.setText(deck.get(6).toString());
+        jButton8.setText(deck.get(7).toString());
+        jButton9.setText(deck.get(8).toString());
+        jButton10.setText(deck.get(9).toString());
+        if (jButton11.isVisible()) {
+            jButton11.setText(deck.get(10).toString());
+            jButton12.setText(deck.get(11).toString());
+        }
     }
+
 
     public void buttonActionPerformed(ActionEvent evt) {
         if (reizen) return;
         int currentTurn = client.getPlayerTurn();
-        if (players[currentTurn][0].equals(client.getUsername())){
+        if (players[currentTurn][0].equals(client.getUsername())) {
             JButton button = (JButton) evt.getSource();
             button.setVisible(false);
             button.setEnabled(false);
@@ -211,19 +214,37 @@ public class GameWindow extends JFrame {
     public void jButton11_ActionPerformed(ActionEvent evt) {
         spielAuswahl spielAuswahl = new spielAuswahl(this);
     }
-    
-    
-    
-    public void setReizen(boolean bool){
+
+
+    public void setReizen(boolean bool) {
         reizen = bool;
     }
-    public void setDeck(List<Karte> deck){
+
+
+    public void setSpielstart(boolean bool) {
+        reizen = bool;
+    }
+
+
+    public void setDeck(List<Karte> deck) {
         this.deck = deck;
     }
 
-    public List<Karte> getDeck(){
+
+    public void setSkat(List<Karte> skat) {
+        this.skat = skat;
+    }
+
+
+    public List<Karte> getDeck() {
         return deck;
     }
+
+
+    public List<Karte> getSkat() {
+        return skat;
+    }
+
 
     public void enableButton() {
         jButton11.setEnabled(true);

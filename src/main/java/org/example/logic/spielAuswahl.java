@@ -42,6 +42,7 @@ public class spielAuswahl extends JFrame{
         Container cp = getContentPane();
         cp.setLayout(null);
 
+        //region set Button propertiers
         jButton1.setBounds(16, 16, 73, 33);
         jButton1.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton1.setText("Kreuz");
@@ -52,8 +53,6 @@ public class spielAuswahl extends JFrame{
             }
         });
         cp.add(jButton1);
-        //canvas1.setBounds(384, 56, 136, 137);
-        //cp.add(canvas1);
         jButton2.setBounds(96, 16, 73, 33);
         jButton2.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton2.setText("Pik");
@@ -136,62 +135,24 @@ public class spielAuswahl extends JFrame{
         cp.add(jButton9);
         jButton9.setVisible(false);
         jButton9.setEnabled(false);
+        //endregion
+
         setVisible(true);
     }
 
-    // Button Kreuz
-    public void jButton1_ActionPerformed(ActionEvent evt) {
+
+    // kontrolliert die Buttons
+    public void buttonActionPerformed(ActionEvent evt, Farbe trumpf){
+        JButton button = (JButton) evt.getSource();
         backGroundNull();
-        jButton1.setBackground(Color.red);
-        spielmodus = Farbe.KREUZ;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KREUZ));
+        button.setBackground(Color.red);
+        spielmodus = trumpf;
+        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
         gameWindow.updateButtonText();
     }
 
-    // Button Pik
-    public void jButton2_ActionPerformed(ActionEvent evt) {
-        backGroundNull();
-        jButton2.setBackground(Color.red);
-        spielmodus = Farbe.PIK;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.PIK));
-        gameWindow.updateButtonText();
-    }
 
-    // Button Herz
-    public void jButton3_ActionPerformed(ActionEvent evt) {
-        backGroundNull();
-        jButton3.setBackground(Color.red);
-        spielmodus = Farbe.HERZ;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.HERZ));
-        gameWindow.updateButtonText();
-    }
-
-    // Button Karo
-    public void jButton4_ActionPerformed(ActionEvent evt) {
-        backGroundNull();
-        jButton4.setBackground(Color.red);
-        spielmodus = Farbe.KARO;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KARO));
-        gameWindow.updateButtonText();
-    }
-
-    // Button Grand
-    public void jButton5_ActionPerformed(ActionEvent evt) {
-        backGroundNull();
-        jButton5.setBackground(Color.red);
-        spielmodus = Farbe.KREUZ;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KREUZ));
-        gameWindow.updateButtonText();
-    }
-
-    // Button Null
-    public void jButton6_ActionPerformed(ActionEvent evt) {
-        backGroundNull();
-        jButton6.setBackground(Color.red);
-        spielmodus = Farbe.NULL;
-        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.NULL));
-        gameWindow.updateButtonText();
-    }
+    // Button Skat aufnehmen
     public void jButton7_ActionPerformed(ActionEvent evt) {
         jButton7.setVisible(false);
         jButton7.setEnabled(false);
@@ -226,18 +187,25 @@ public class spielAuswahl extends JFrame{
 
         gameWindow.updateButtonText();
     }
+
+
+    // Button Handspiel ansagen
     public void jButton8_ActionPerformed(ActionEvent evt) {
         setVisible(false);
         setEnabled(false);
         gameWindow.setReizen(false);//GUI.spielstart = true;
     }
 
+
+    // Button Spiel ansagen
     public void jButton9_ActionPerformed(ActionEvent evt) {
         setVisible(false);
         setEnabled(false);
         gameWindow.setReizen(false);//GUI.spielstart = true;
     }
 
+
+    // sets the color of every other Button (which is not selected) to white
     public void backGroundNull() {
         jButton1.setBackground(null);
         jButton2.setBackground(null);
