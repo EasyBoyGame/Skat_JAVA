@@ -2,18 +2,16 @@ package org.example.client_server_system;
 
 import org.example.logic.Karte;
 import org.example.logic.Mischen;
+import org.example.logic.Reizen;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Server implements Runnable {
 
@@ -24,8 +22,11 @@ public class Server implements Runnable {
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
     private final int MAX_PLAYERS = 3;
-    private int playerTurn;
-
+    private int gameturn;
+    private int reizCounter;
+    private int startPlayer = 2;
+    private Reizen reizen;
+    private int reizPlayer;
 
 
     @Override
@@ -37,6 +38,7 @@ public class Server implements Runnable {
 
     //Constructor
     public Server(int port) {
+        reizen = new Reizen();
         this.port = port;
     }
 
@@ -138,20 +140,24 @@ public class Server implements Runnable {
         switch (messageType) {
             case CONNECTION:
                 setMetaData(client, trim);
-                sendServerMessage(MessageType.UPDATE_LOBBY, socketListToString());
+                sendServerBroadcast(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
             case START_GAME:
-                playerTurn = 1;
-                startGame();
+                gameturn = 1;
+                spreadCards();
+                startPlayer = (startPlayer + 1 > 2) ? 0 : + 1;
+                reizPlayer = (startPlayer + 2) % 3;
+                sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
                 break;
             case REIZEN:
+                reizen(content);
                 System.out.println("ES WURDE GEREIZT" + content);
                 break;
             case CARD_PLAYED:
-                if (playerTurn < 30) {
-                    sendServerMessage(MessageType.CARD_PLAYED, "" + playerTurn % 3);
+                if (gameturn < 30) {
+                    sendServerBroadcast(MessageType.CARD_PLAYED, "" + gameturn % 3);
                     System.out.println(content);
-                    playerTurn++;
+                    gameturn++;
                 }
                 break;
             default:
@@ -159,12 +165,19 @@ public class Server implements Runnable {
         }
     }
 
+    private void reizen(String content) {
+        if (content.equals("true")){
+            sendServerMessage(clients.get((reizPlayer + 1) % 3), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
+        }
+    }
 
-    private void startGame() {
+
+    private void spreadCards() {
         Mischen mischen = new Mischen();
         int counter = 1;
         for (SocketChannel client : clients) {
 
+            //region Stringbuilder
             List<Karte> karten = new ArrayList<>(mischen.getKarten(counter));
             List<Karte> skat = new ArrayList<>(mischen.getKarten(4));
             StringBuilder builder = new StringBuilder();
@@ -175,18 +188,16 @@ public class Server implements Runnable {
             for (Karte karte: skat) {
                 builder.append(karte).append(",");
             }
-            ByteBuffer tempBuffer = ByteBuffer.wrap((MessageType.START_GAME.name() + ":" + String.valueOf(builder) + "\n").getBytes());
-            try {
-                client.write(tempBuffer);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            //endregion Stringbuilder
+
+            sendServerMessage(client, MessageType.START_GAME, builder.toString());
+
             counter++;
         }
     }
 
 
-    public void sendServerMessage(MessageType messageType, String message) {
+    public void sendServerBroadcast(MessageType messageType, String message) {
         for (SocketChannel client : clients) {
             ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
             try {
@@ -194,6 +205,16 @@ public class Server implements Runnable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+
+    private void sendServerMessage(SocketChannel client, MessageType messageType, String message){
+        ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
+        try {
+            client.write(tempBuffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
