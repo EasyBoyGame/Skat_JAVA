@@ -41,6 +41,7 @@ public class GameWindow extends JFrame {
     private String[][] players;
     private boolean reizen = true;
     private boolean spielstart = false;
+    private boolean reizAntwort = false;
 
 
     public GameWindow(List<Karte> deck, List<Karte> skat, Client client) {
@@ -230,7 +231,8 @@ public class GameWindow extends JFrame {
     }
 
 
-    public void enableReizen(String reizWert) {
+    public void enableReizen(String reizWert, boolean reizAntwort) {
+        this.reizAntwort = reizAntwort;
         jButton14.setVisible(true);
         jButton14.setText(reizWert);
         jButton15.setVisible(true);
@@ -246,14 +248,26 @@ public class GameWindow extends JFrame {
 
 
     private void reizen_ActionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource() == jButton14){
-            client.sendPlayerActions(MessageType.REIZEN, "true");
-            jButton14.setVisible(false);
-            jButton15.setVisible(false);
-        } else if (actionEvent.getSource() == jButton15){
-            client.sendPlayerActions(MessageType.REIZEN, "false");
-            jButton14.setVisible(false);
-            jButton15.setVisible(false);
+        if (reizAntwort){
+            if (actionEvent.getSource() == jButton14){
+                client.sendPlayerActions(MessageType.REIZ_ANTWORT, "true");
+                jButton14.setVisible(false);
+                jButton15.setVisible(false);
+            } else if (actionEvent.getSource() == jButton15){
+                client.sendPlayerActions(MessageType.REIZ_ANTWORT, "false");
+                jButton14.setVisible(false);
+                jButton15.setVisible(false);
+            }
+        } else {
+            if (actionEvent.getSource() == jButton14) {
+                client.sendPlayerActions(MessageType.REIZEN, "true");
+                jButton14.setVisible(false);
+                jButton15.setVisible(false);
+            } else if (actionEvent.getSource() == jButton15) {
+                client.sendPlayerActions(MessageType.REIZEN, "false");
+                jButton14.setVisible(false);
+                jButton15.setVisible(false);
+            }
         }
     }
 

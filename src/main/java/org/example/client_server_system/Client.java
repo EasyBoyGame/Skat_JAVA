@@ -90,6 +90,7 @@ public class Client {
                             case START_GAME -> startGame(content);
                             case CARD_PLAYED -> playerTurn = Integer.parseInt(content);
                             case REIZEN -> reizen(content);
+                            case REIZ_ANTWORT -> reizAntwort(content);
                         }
                     }
                 }
@@ -99,8 +100,12 @@ public class Client {
         }).start();
     }
 
+    private void reizAntwort(String content) {
+        gameWindow.enableReizen(content, true);
+    }
+
     private void reizen(String content) {
-        gameWindow.enableReizen(content);
+        gameWindow.enableReizen(content, false);
     }
 
 

@@ -166,7 +166,9 @@ public class Server implements Runnable {
     }
 
     private void reizen(String content) {
-        if (content.equals("true")){
+        if (content.equals("false")) {
+            sendServerMessage(clients.get(startPlayer), MessageType.REIZEN, "" + reizen.getReizwert());
+        } else {
             sendServerMessage(clients.get((reizPlayer + 1) % 3), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
         }
     }
