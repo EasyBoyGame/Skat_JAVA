@@ -27,6 +27,7 @@ public class Client {
     private int port;
     private GameWindow gameWindow;
     private int playerTurn = 0;
+    private Farbe trumpf;
 
 
     /**
@@ -69,7 +70,6 @@ public class Client {
                     int bytesRead = clientChannel.read(buffer);
 
                     if (bytesRead > 0) {
-
                         // wandelt bytes in String um
                         buffer.flip();
                         byte[] bytes = new byte[bytesRead];

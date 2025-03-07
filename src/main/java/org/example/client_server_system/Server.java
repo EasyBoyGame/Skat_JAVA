@@ -1,8 +1,6 @@
 package org.example.client_server_system;
 
-import org.example.logic.Karte;
-import org.example.logic.Mischen;
-import org.example.logic.Reizen;
+import org.example.logic.*;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -21,12 +19,17 @@ public class Server implements Runnable {
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
+    private List<String> stich = new ArrayList<>();
+    private int soloPlayer;
+    private int augenSolo;
+    private int augenDuo;
     private Reizen reizen;
     private final int MAX_PLAYERS = 3;
     private int gameturn;
     private int startPlayer = 2;
     private int reizPlayer;
     private int answPlayer;
+    private Farbe trumpf;
 
 
     @Override
@@ -144,7 +147,7 @@ public class Server implements Runnable {
             case OPEN_GAME:
                 gameturn = 1;
                 spreadCards();
-                startPlayer = (startPlayer + 1 > 2) ? 0 : + 1;
+                startPlayer = (startPlayer + 1 > 2) ? 0 : +1;
                 reizPlayer = (startPlayer + 2) % 3;
                 answPlayer = (startPlayer + 1) % 3;
                 sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
@@ -171,9 +174,10 @@ public class Server implements Runnable {
 
 
     private void reizenAntwort(String content) {
-        if (content.equals("true")){
+        if (content.equals("true")) {
             sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
         } else {
+            soloPlayer = reizPlayer;
             sendServerMessage(clients.get(reizPlayer), MessageType.START_SPIELAUSWAHL, "");
         }
     }
@@ -181,7 +185,8 @@ public class Server implements Runnable {
 
     private void reizen(String content) {
         if (content.equals("false")) {
-            if (reizPlayer == startPlayer){
+            if (reizPlayer == startPlayer) {
+                soloPlayer = answPlayer;
                 sendServerMessage(clients.get(answPlayer), MessageType.START_SPIELAUSWAHL, "");
             } else {
                 reizPlayer = startPlayer;
@@ -206,7 +211,7 @@ public class Server implements Runnable {
                 builder.append(karte).append(",");
             }
             builder.append(":");    // ':' zur Trennung von Skat und den Spielkarten
-            for (Karte karte: skat) {
+            for (Karte karte : skat) {
                 builder.append(karte).append(",");
             }
             //endregion Stringbuilder
@@ -230,7 +235,7 @@ public class Server implements Runnable {
     }
 
 
-    private void sendServerMessage(SocketChannel client, MessageType messageType, String message){
+    private void sendServerMessage(SocketChannel client, MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
         try {
             client.write(tempBuffer);

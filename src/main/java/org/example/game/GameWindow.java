@@ -146,7 +146,7 @@ public class GameWindow extends JFrame {
         cp.add(jButton12);
         //endregion
 
-
+        //region Reizen
         jButton14.setBounds(400, 150, 105, 73);
         jButton14.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton14.setText("Reizen");
@@ -162,6 +162,7 @@ public class GameWindow extends JFrame {
         jButton15.addActionListener(this::reizen_ActionPerformed);
         cp.add(jButton15);
         jButton15.setVisible(false);
+        //endregion
 
         //region jLabel
         jLabelCard1.setBounds(384, 56, 136, 137);
@@ -183,10 +184,12 @@ public class GameWindow extends JFrame {
         cp.add(jLabel2);
         //endregion
 
+        //region unknown Canvas
         canvas4.setBounds(1080, 16, 24, 73);
         cp.add(canvas4);
         canvas5.setBounds(1080, 100, 24, 73);
         cp.add(canvas5);
+        //endregion
 
         updateButtonText();
         setVisible(true);

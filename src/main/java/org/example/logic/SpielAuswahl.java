@@ -1,4 +1,6 @@
 package org.example.logic;
+import org.example.client_server_system.Client;
+import org.example.client_server_system.MessageType;
 import org.example.game.GameWindow;
 
 import java.awt.event.ActionEvent;
@@ -23,6 +25,7 @@ public class SpielAuswahl extends JFrame{
     private GameWindow gameWindow;
     private List<Karte> deck;
     private Farbe spielmodus;
+    private Client client;
 
 
 
@@ -199,6 +202,7 @@ public class SpielAuswahl extends JFrame{
             JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
             return;
         }
+        client.sendPlayerActions(MessageType.TRUMPF, spielmodus.name());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         gameWindow.setSpielstart(true);
