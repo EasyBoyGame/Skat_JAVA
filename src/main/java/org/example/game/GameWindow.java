@@ -163,7 +163,7 @@ public class GameWindow extends JFrame {
         cp.add(jButton15);
         jButton15.setVisible(false);
 
-        //region Canvas
+        //region jLabel
         jLabelCard1.setBounds(384, 56, 136, 137);
         cp.add(jLabelCard1);
         cardPlaces[0] = jLabelCard1;
@@ -173,13 +173,6 @@ public class GameWindow extends JFrame {
         jLabelCard3.setBounds(568, 256, 136, 137);
         cp.add(jLabelCard3);
         cardPlaces[2] = jLabelCard3;
-        canvas4.setBounds(1080, 16, 24, 73);
-        cp.add(canvas4);
-        canvas5.setBounds(1080, 100, 24, 73);
-        cp.add(canvas5);
-        //endregion
-
-        //region jLabel
         jLabel1.setBounds(400, 16, 80, 24);
         jLabel1.setFont(new Font("Dialog", Font.BOLD, 11));
         jLabel1.setText("Spieler 2");
@@ -190,13 +183,17 @@ public class GameWindow extends JFrame {
         cp.add(jLabel2);
         //endregion
 
+        canvas4.setBounds(1080, 16, 24, 73);
+        cp.add(canvas4);
+        canvas5.setBounds(1080, 100, 24, 73);
+        cp.add(canvas5);
+
         updateButtonText();
         setVisible(true);
     }
 
 
     // Buttonname → wird zu jeweiliger Karte umbenannt
-
     public void updateButtonText() {
         jButton1.setText(deck.get(0).toString());
         jButton2.setText(deck.get(1).toString());
@@ -256,6 +253,7 @@ public class GameWindow extends JFrame {
             handleReizantwort(actionEvent, MessageType.REIZEN);
         }
     }
+
 
     private void handleReizantwort(ActionEvent actionEvent, MessageType messageType){
         if (actionEvent.getSource() == jButton14) {

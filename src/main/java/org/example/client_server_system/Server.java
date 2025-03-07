@@ -124,7 +124,6 @@ public class Server implements Runnable {
         for (String msg : messages) {
             processMessage(client, msg.trim());
         }
-
     }
 
 
@@ -169,14 +168,15 @@ public class Server implements Runnable {
         }
     }
 
+
     private void reizenAntwort(String content) {
         if (content.equals("true")){
             sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
         } else {
             sendServerMessage(clients.get(reizPlayer), MessageType.START_SPIELAUSWAHL, "");
         }
-
     }
+
 
     private void reizen(String content) {
         if (content.equals("false")) {
