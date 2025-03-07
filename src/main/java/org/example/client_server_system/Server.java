@@ -153,6 +153,8 @@ public class Server implements Runnable {
                 reizen(content);
                 System.out.println("ES WURDE GEREIZT" + content);
                 break;
+            case REIZ_ANTWORT:
+                reizenAntwort(content);
             case CARD_PLAYED:
                 if (gameturn < 30) {
                     sendServerBroadcast(MessageType.CARD_PLAYED, "" + gameturn % 3);
@@ -165,9 +167,23 @@ public class Server implements Runnable {
         }
     }
 
+    private void reizenAntwort(String content) {
+        if (content.equals("true")){
+            sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
+        } else {
+            //TODO start reizplayer game
+        }
+
+    }
+
     private void reizen(String content) {
         if (content.equals("false")) {
-            sendServerMessage(clients.get(startPlayer), MessageType.REIZEN, "" + reizen.getReizwert());
+            if (reizPlayer == startPlayer){
+                //TODO start reizantwort game
+            } else {
+                reizPlayer = startPlayer;
+                sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.getReizwert());
+            }
         } else {
             sendServerMessage(clients.get((reizPlayer + 1) % 3), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
         }

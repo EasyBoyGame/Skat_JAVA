@@ -89,8 +89,8 @@ public class Client {
                             case UPDATE_LOBBY -> updateWaitingLobby(content);
                             case START_GAME -> startGame(content);
                             case CARD_PLAYED -> playerTurn = Integer.parseInt(content);
-                            case REIZEN -> reizen(content);
-                            case REIZ_ANTWORT -> reizAntwort(content);
+                            case REIZEN -> gameWindow.enableReizen(content, false);
+                            case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
                         }
                     }
                 }
@@ -98,14 +98,6 @@ public class Client {
                 System.out.println("Disconnected from server.");
             }
         }).start();
-    }
-
-    private void reizAntwort(String content) {
-        gameWindow.enableReizen(content, true);
-    }
-
-    private void reizen(String content) {
-        gameWindow.enableReizen(content, false);
     }
 
 

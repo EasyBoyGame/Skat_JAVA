@@ -249,25 +249,21 @@ public class GameWindow extends JFrame {
 
     private void reizen_ActionPerformed(ActionEvent actionEvent) {
         if (reizAntwort){
-            if (actionEvent.getSource() == jButton14){
-                client.sendPlayerActions(MessageType.REIZ_ANTWORT, "true");
-                jButton14.setVisible(false);
-                jButton15.setVisible(false);
-            } else if (actionEvent.getSource() == jButton15){
-                client.sendPlayerActions(MessageType.REIZ_ANTWORT, "false");
-                jButton14.setVisible(false);
-                jButton15.setVisible(false);
-            }
+            handleReizantwort(actionEvent, MessageType.REIZ_ANTWORT);
         } else {
-            if (actionEvent.getSource() == jButton14) {
-                client.sendPlayerActions(MessageType.REIZEN, "true");
-                jButton14.setVisible(false);
-                jButton15.setVisible(false);
-            } else if (actionEvent.getSource() == jButton15) {
-                client.sendPlayerActions(MessageType.REIZEN, "false");
-                jButton14.setVisible(false);
-                jButton15.setVisible(false);
-            }
+            handleReizantwort(actionEvent, MessageType.REIZEN);
+        }
+    }
+
+    private void handleReizantwort(ActionEvent actionEvent, MessageType messageType){
+        if (actionEvent.getSource() == jButton14) {
+            client.sendPlayerActions(messageType, "true");
+            jButton14.setVisible(false);
+            jButton15.setVisible(false);
+        } else if (actionEvent.getSource() == jButton15) {
+            client.sendPlayerActions(messageType, "false");
+            jButton14.setVisible(false);
+            jButton15.setVisible(false);
         }
     }
 
