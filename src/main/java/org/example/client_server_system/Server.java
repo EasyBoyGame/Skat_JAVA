@@ -156,6 +156,7 @@ public class Server implements Runnable {
                 break;
             case REIZ_ANTWORT:
                 reizenAntwort(content);
+                break;
             case CARD_PLAYED:
                 if (gameturn < 30) {
                     sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
