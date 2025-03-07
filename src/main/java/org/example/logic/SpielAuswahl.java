@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.WindowEvent;
+import java.nio.channels.SocketChannel;
 import java.util.List;
 
 public class SpielAuswahl extends JFrame{
@@ -29,8 +30,9 @@ public class SpielAuswahl extends JFrame{
 
 
 
-    public SpielAuswahl(GameWindow gameWindow) {
+    public SpielAuswahl(GameWindow gameWindow, Client client) {
         super();
+        this.client = client;
         this.gameWindow = gameWindow;
         deck = gameWindow.getDeck();
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -215,6 +217,7 @@ public class SpielAuswahl extends JFrame{
             JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
             return;
         }
+        client.sendPlayerActions(MessageType.TRUMPF, spielmodus.name());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         gameWindow.setSpielstart(true);

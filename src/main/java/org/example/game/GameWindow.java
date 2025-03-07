@@ -229,11 +229,10 @@ public class GameWindow extends JFrame {
 
 
     public void cardPlayed(String content) {
-        if (!cardPlaces[2].getText().equals("")){
+        if (!cardPlaces[2].getText().equals("") && !cardPlaces[1].getText().equals("") && !cardPlaces[0].getText().equals("")){
             for (JLabel label: cardPlaces) {
                 label.setText("");
             }
-            //TODO add logic here for stich winning
         }
         cardPlaces[client.getPlayerTurn()].setText(content);
     }

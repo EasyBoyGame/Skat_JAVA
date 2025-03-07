@@ -160,12 +160,25 @@ public class Server implements Runnable {
                 reizenAntwort(content);
                 break;
             case CARD_PLAYED:
+                if (!(stich.size() < 3)) {
+                    int stichWin = vergleichStich(stich);
+                    if (stichWin == soloPlayer) {
+                        augenSolo = augenZaehlen(augenSolo);
+                    } else {
+                        augenDuo = augenZaehlen(augenDuo);
+                    }
+                }
+                stich.add(content);
                 if (gameturn < 30) {
                     sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
                     sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
                     System.out.println(content);
                     gameturn++;
                 }
+                break;
+            case TRUMPF:
+                this.trumpf = Farbe.valueOf(content);
+                sendServerBroadcast(MessageType.TRUMPF, content);
                 break;
             default:
                 System.out.println("Unknown message type.");
@@ -264,4 +277,57 @@ public class Server implements Runnable {
 
         return builder.toString();
     }
+
+
+    private int vergleichStich(List<String> karten) {
+        String[] reihenfolge = {"7", "8", "9", "10", "BUBE", "DAME", "KÖNIG", "ASS"};
+        Map<String, Integer> wertung = new HashMap<>();
+        for (int i = 0; i < reihenfolge.length; i++) {
+            wertung.put(reihenfolge[i], i);
+        }
+
+        String angespielteFarbe = karten.get(0).split(" ")[0];
+        int gewinnerIndex = 0;
+        String besteKarte = karten.get(0);
+
+        for (int i = 1; i < karten.size(); i++) {
+            String[] karte = karten.get(i).split(" ");
+            String farbe = karte[0];
+            String wert = karte[1];
+
+            String[] beste = besteKarte.split(" ");
+            String besteFarbe = beste[0];
+            String besteWert = beste[1];
+
+            if (trumpf.name().equals("NULL")) {
+                // Im Nullspiel gewinnt die niedrigste Karte in der angespielten Farbe
+                if (farbe.equals(angespielteFarbe) && wertung.get(wert) < wertung.get(besteWert)) {
+                    gewinnerIndex = i;
+                    besteKarte = karten.get(i);
+                }
+            } else {
+                // Normales Spiel mit Trumpf
+                boolean aktuelleIstTrumpf = farbe.equals(trumpf.name());
+                boolean besteIstTrumpf = besteFarbe.equals(trumpf.name());
+
+                if ((aktuelleIstTrumpf && !besteIstTrumpf) ||
+                        (aktuelleIstTrumpf == besteIstTrumpf && farbe.equals(besteFarbe) && wertung.get(wert) > wertung.get(besteWert))) {
+                    gewinnerIndex = i;
+                    besteKarte = karten.get(i);
+                }
+            }
+        }
+        return gewinnerIndex;
+    }
+
+
+    private int augenZaehlen(int augenWert) {
+        Kartenwert kartenwert = new Kartenwert(trumpf);
+        for (String karte : stich) {
+            augenWert += kartenwert.getPunkte(Kartenart.valueOf(karte.split(" ")[1]));
+        }
+        stich.clear();
+        return augenWert;
+    }
 }
+

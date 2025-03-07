@@ -96,8 +96,9 @@ public class Client {
                             case REIZEN -> gameWindow.enableReizen(content, false);
                             case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
                             case START_SPIELAUSWAHL -> {
-                                SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow);
+                                SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
                             }
+                            case TRUMPF -> trumpf = Farbe.valueOf(content);
                         }
                     }
                 }

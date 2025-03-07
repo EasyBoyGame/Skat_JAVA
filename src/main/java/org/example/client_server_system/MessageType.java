@@ -7,5 +7,6 @@ public enum MessageType {
     CARD_PLAYED,
     REIZEN,
     REIZ_ANTWORT,
-    START_SPIELAUSWAHL
+    START_SPIELAUSWAHL,
+    TRUMPF
 }
