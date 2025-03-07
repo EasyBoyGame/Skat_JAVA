@@ -6,10 +6,9 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
 
-public class spielAuswahl extends JFrame{
+public class SpielAuswahl extends JFrame{
 
     private JButton jButton1 = new JButton();
     private JButton jButton2 = new JButton();
@@ -27,7 +26,7 @@ public class spielAuswahl extends JFrame{
 
 
 
-    public spielAuswahl(GameWindow gameWindow) {
+    public SpielAuswahl(GameWindow gameWindow) {
         super();
         this.gameWindow = gameWindow;
         deck = gameWindow.getDeck();
@@ -202,9 +201,7 @@ public class spielAuswahl extends JFrame{
         }
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        //setVisible(false);
-        //setEnabled(false);
-        gameWindow.setSpielstart(true);//GUI.spielstart = true;
+        gameWindow.setSpielstart(true);
     }
 
 
@@ -216,9 +213,7 @@ public class spielAuswahl extends JFrame{
         }
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        //setVisible(false);
-        //setEnabled(false);
-        gameWindow.setSpielstart(true);//GUI.spielstart = true;
+        gameWindow.setSpielstart(true);
     }
 
 

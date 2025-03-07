@@ -4,7 +4,7 @@ import org.example.client_server_system.Client;
 import org.example.client_server_system.MessageType;
 import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.Karte;
-import org.example.logic.spielAuswahl;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,16 +25,16 @@ public class GameWindow extends JFrame {
     private JButton jButton10 = new JButton();  // deck Karte 10
     private JButton jButton11 = new JButton();  // Skat Karte 1
     private JButton jButton12 = new JButton();  // Skat Karte 2
-    private JButton jButton13 = new JButton();  // Spielauswahl
     private JButton jButton14 = new JButton();  // reizen ja
     private JButton jButton15 = new JButton();  // reizen nein
-    private Canvas canvas1 = new Canvas();
-    private Canvas canvas2 = new Canvas();
-    private Canvas canvas3 = new Canvas();
+    private JLabel jLabelCard1 = new JLabel();
+    private JLabel jLabelCard2 = new JLabel();
+    private JLabel jLabelCard3 = new JLabel();
     private Canvas canvas4 = new Canvas();
     private Canvas canvas5 = new Canvas();
     private JLabel jLabel1 = new JLabel();
     private JLabel jLabel2 = new JLabel();
+    private JLabel[] cardPlaces = new JLabel[3];
     private List<Karte> deck;
     private List<Karte> skat;
     private Client client;
@@ -146,12 +146,6 @@ public class GameWindow extends JFrame {
         cp.add(jButton12);
         //endregion
 
-        jButton13.setBounds(820, 260, 105, 73);
-        jButton13.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton13.setText("Spielauswahl");
-        jButton13.setMargin(new Insets(2, 2, 2, 2));
-        jButton13.addActionListener(this::spielauswahl_ActionPerformed);
-        cp.add(jButton13);
 
         jButton14.setBounds(400, 150, 105, 73);
         jButton14.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -170,12 +164,15 @@ public class GameWindow extends JFrame {
         jButton15.setVisible(false);
 
         //region Canvas
-        canvas1.setBounds(384, 56, 136, 137);
-        cp.add(canvas1);
-        canvas2.setBounds(744, 64, 136, 137);
-        cp.add(canvas2);
-        canvas3.setBounds(568, 256, 136, 137);
-        cp.add(canvas3);
+        jLabelCard1.setBounds(384, 56, 136, 137);
+        cp.add(jLabelCard1);
+        cardPlaces[0] = jLabelCard1;
+        jLabelCard2.setBounds(744, 64, 136, 137);
+        cp.add(jLabelCard2);
+        cardPlaces[1] = jLabelCard2;
+        jLabelCard3.setBounds(568, 256, 136, 137);
+        cp.add(jLabelCard3);
+        cardPlaces[2] = jLabelCard3;
         canvas4.setBounds(1080, 16, 24, 73);
         cp.add(canvas4);
         canvas5.setBounds(1080, 100, 24, 73);
@@ -231,6 +228,11 @@ public class GameWindow extends JFrame {
     }
 
 
+    public void cardPlayed(String content) {
+        cardPlaces[client.getPlayerTurn()].setText(content);
+    }
+
+
     public void enableReizen(String reizWert, boolean reizAntwort) {
         this.reizAntwort = reizAntwort;
         jButton14.setVisible(true);
@@ -265,16 +267,6 @@ public class GameWindow extends JFrame {
             jButton14.setVisible(false);
             jButton15.setVisible(false);
         }
-    }
-
-    public void spielauswahl_ActionPerformed(ActionEvent evt) {
-        if (reizen) return;
-        spielAuswahl spielAuswahl = new spielAuswahl(this);
-    }
-
-
-    public void setReizen(boolean bool) {
-        reizen = bool;
     }
 
 

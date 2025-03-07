@@ -21,12 +21,12 @@ public class Server implements Runnable {
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
+    private Reizen reizen;
     private final int MAX_PLAYERS = 3;
     private int gameturn;
-    private int reizCounter;
     private int startPlayer = 2;
-    private Reizen reizen;
     private int reizPlayer;
+    private int answPlayer;
 
 
     @Override
@@ -142,11 +142,12 @@ public class Server implements Runnable {
                 setMetaData(client, trim);
                 sendServerBroadcast(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
-            case START_GAME:
+            case OPEN_GAME:
                 gameturn = 1;
                 spreadCards();
                 startPlayer = (startPlayer + 1 > 2) ? 0 : + 1;
                 reizPlayer = (startPlayer + 2) % 3;
+                answPlayer = (startPlayer + 1) % 3;
                 sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
                 break;
             case REIZEN:
@@ -157,7 +158,8 @@ public class Server implements Runnable {
                 reizenAntwort(content);
             case CARD_PLAYED:
                 if (gameturn < 30) {
-                    sendServerBroadcast(MessageType.CARD_PLAYED, "" + gameturn % 3);
+                    sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
+                    sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
                     System.out.println(content);
                     gameturn++;
                 }
@@ -171,7 +173,7 @@ public class Server implements Runnable {
         if (content.equals("true")){
             sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
         } else {
-            //TODO start reizplayer game
+            sendServerMessage(clients.get(reizPlayer), MessageType.START_SPIELAUSWAHL, "");
         }
 
     }
@@ -179,13 +181,13 @@ public class Server implements Runnable {
     private void reizen(String content) {
         if (content.equals("false")) {
             if (reizPlayer == startPlayer){
-                //TODO start reizantwort game
+                sendServerMessage(clients.get(answPlayer), MessageType.START_SPIELAUSWAHL, "");
             } else {
                 reizPlayer = startPlayer;
                 sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.getReizwert());
             }
         } else {
-            sendServerMessage(clients.get((reizPlayer + 1) % 3), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
+            sendServerMessage(clients.get(answPlayer), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
         }
     }
 
@@ -208,7 +210,7 @@ public class Server implements Runnable {
             }
             //endregion Stringbuilder
 
-            sendServerMessage(client, MessageType.START_GAME, builder.toString());
+            sendServerMessage(client, MessageType.OPEN_GAME, builder.toString());
 
             counter++;
         }

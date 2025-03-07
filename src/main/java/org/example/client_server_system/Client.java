@@ -7,14 +7,13 @@ import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.Farbe;
 import org.example.logic.Karte;
 import org.example.logic.Kartenart;
+import org.example.logic.SpielAuswahl;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Client {
@@ -87,10 +86,18 @@ public class Client {
 
                         switch (messageType) {
                             case UPDATE_LOBBY -> updateWaitingLobby(content);
-                            case START_GAME -> startGame(content);
-                            case CARD_PLAYED -> playerTurn = Integer.parseInt(content);
+                            case OPEN_GAME -> openGame(content);
+                            case CARD_PLAYED -> {
+                                parts = content.split(":");
+                                gameWindow.setSpielstart(true);
+                                gameWindow.cardPlayed(parts[0]);
+                                playerTurn = Integer.parseInt(parts[1]);
+                            }
                             case REIZEN -> gameWindow.enableReizen(content, false);
                             case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
+                            case START_SPIELAUSWAHL -> {
+                                SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow);
+                            }
                         }
                     }
                 }
@@ -101,7 +108,7 @@ public class Client {
     }
 
 
-    private void startGame(String message) {
+    private void openGame(String message) {
         String[] decks = message.split(":");                    // alle Spielkarten
         List<Karte> deck = extractCards(decks[0].split(","));   // Spielkarten als Liste
         List<Karte> skat = extractCards(decks[1].split(","));   // Skat als Liste

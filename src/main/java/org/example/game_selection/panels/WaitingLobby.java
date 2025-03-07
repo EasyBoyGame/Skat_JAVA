@@ -6,7 +6,6 @@ import org.example.game_selection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.net.InetAddress;
 
 public class WaitingLobby extends JPanel {
@@ -69,7 +68,7 @@ public class WaitingLobby extends JPanel {
         startGame.setEnabled(true);
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
         startGame.addActionListener(e -> {
-            client.sendPlayerActions(MessageType.START_GAME, "");
+            client.sendPlayerActions(MessageType.OPEN_GAME, "");
         });
         add(startGame);
     }
