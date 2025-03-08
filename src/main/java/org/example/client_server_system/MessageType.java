@@ -8,5 +8,9 @@ public enum MessageType {
     REIZEN,
     REIZ_ANTWORT,
     START_SPIELAUSWAHL,
-    TRUMPF
+    TRUMPF,
+    END_GAME,
+    BUBEN,
+    HANDSPIEL,
+
 }

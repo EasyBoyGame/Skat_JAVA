@@ -9,6 +9,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpielAuswahl extends JFrame{
@@ -35,6 +36,7 @@ public class SpielAuswahl extends JFrame{
         this.client = client;
         this.gameWindow = gameWindow;
         deck = gameWindow.getDeck();
+        this.client.sendPlayerActions(MessageType.BUBEN, getBuben());
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         int frameWidth = 520;
         int frameHeight = 242;
@@ -124,9 +126,7 @@ public class SpielAuswahl extends JFrame{
         jButton8.setText("Handspiel ansagen");
         jButton8.setMargin(new Insets(2, 2, 2, 2));
         jButton8.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jButton8_ActionPerformed(evt);
-            }
+            public void actionPerformed(ActionEvent evt) { jButton8_ActionPerformed(evt); }
         });
         cp.add(jButton8);
         jButton9.setBounds(336, 136, 153, 41);
@@ -172,6 +172,7 @@ public class SpielAuswahl extends JFrame{
         List<Karte> deck = gameWindow.getDeck();
         deck.addAll(gameWindow.getSkat());
         gameWindow.setDeck(deck);
+        client.sendPlayerActions(MessageType.BUBEN, getBuben());
         //GUI.dec1.addAll(GUI.decskat);
 
         spielmodus = Farbe.KREUZ;
@@ -221,6 +222,21 @@ public class SpielAuswahl extends JFrame{
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         gameWindow.setSpielstart(true);
+    }
+
+
+    // holt sich die Buben des Solo-Spielers
+    public String getBuben(){
+        StringBuilder buben = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            if(deck.get(i).toString().split(" ")[1].equals("BUBE")){
+                buben.append(deck.get(i).toString()).append(",");
+            }
+            else buben.append(",");
+        }
+        if(!buben.isEmpty()) buben.deleteCharAt(buben.length() -1);
+
+        return buben.toString();
     }
 
 

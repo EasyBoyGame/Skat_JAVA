@@ -17,10 +17,10 @@ public class Reizen {
 
     public int appendReizwert(){
         aktuellerReizwert++;
-        return reizTabelle.get(aktuellerReizwert-1);
+        return reizWerte.get(aktuellerReizwert-1);
     }
 
     public int getReizwert() {
-        return reizTabelle.get(aktuellerReizwert-1);
+        return reizWerte.get(aktuellerReizwert-1);
     }
 }

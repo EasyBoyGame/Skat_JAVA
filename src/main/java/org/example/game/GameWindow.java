@@ -215,6 +215,7 @@ public class GameWindow extends JFrame {
         }
     }
 
+
     public void buttonActionPerformed(ActionEvent evt) {
         if (!spielstart) return;
         int currentTurn = client.getPlayerTurn();
@@ -288,13 +289,13 @@ public class GameWindow extends JFrame {
     }
 
 
-    public void setSkat(List<Karte> skat) {
-        this.skat = skat;
+    public List<Karte> getDeck() {
+        return deck;
     }
 
 
-    public List<Karte> getDeck() {
-        return deck;
+    public void setSkat(List<Karte> skat) {
+        this.skat = skat;
     }
 
 

@@ -1,5 +1,6 @@
 package org.example.client_server_system;
 
+import org.example.database.DBHelper;
 import org.example.logic.*;
 
 import java.io.*;
@@ -9,6 +10,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Server implements Runnable {
@@ -16,6 +20,9 @@ public class Server implements Runnable {
     //Attribute
     Selector selector;
     ServerSocketChannel serverChannel;
+    DBHelper helper;
+    private String timestamp;
+    private boolean createTable = false;
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
@@ -30,26 +37,31 @@ public class Server implements Runnable {
     private int reizPlayer;
     private int answPlayer;
     private Farbe trumpf;
+    private String buben;
+    private boolean handspiel;
 
-
-    // TODO 1. WENN DIE ERSTEN BEIDEN SPIELER NEIN REIZEN, DANN MUSS DER LETZTE SPIELER DEN SKAT
-    //  SOFORT BEKOMMEN (eigentlich nicht aber so wirds erstmal implementiert)
 
     // TODO 2. SPIEL MUSS BEENDET WERDEN, SOBALD ALLE KARTEN GESPIELT WURDEN
 
-    // TODO 3. SOBALD SPIEL ANGESAGT WIRD (setSpielstart = true), MÜSSEN KARTEN BEI DUO ENTSPRECHEND
-    //  SORTIERT WERDEN
+    // TODO 3. SKAT WEGDRÜCKEN
 
-    // TODO 4. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
+    // TODO 5. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
 
-    // TODO 5. GESAMTEN CODE KOMMENTIEREN
+    // TODO 6. GESAMTEN CODE KOMMENTIEREN
 
+    // TODO 7. USERNAME IN GUI ANZEIGEN
+
+    // TODO 8. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
+
+
+    // TODO EXTRA: NULL HAND PUNKT AUSZÄHLEN NICHT IMPLEMENTIERT
 
     // TODO EXTRA (wichtig?): DATENBANK IN LISTE AUSLESEN, UM NACH DEM SPIELEN EINE
     //  SPIELAUSWERTUNG ZU HABEN
 
-    // TODO EXTRA: SPIELER DISCONNECT
+    // TODO EXTRA: SPIEL EINPASSEN
 
+    // TODO EXTRA: SPIELER DISCONNECT
 
 
     @Override
@@ -59,7 +71,7 @@ public class Server implements Runnable {
     }
 
 
-    //Constructor
+    // Konstruktor
     public Server(int port) {
         reizen = new Reizen();
         this.port = port;
@@ -182,6 +194,9 @@ public class Server implements Runnable {
                 if (stich.size() > 2) {
                     int stichWin = vergleichStich(stich);
                     if (stichWin == soloPlayer) {
+                        if(trumpf == Farbe.NULL){
+                            setPoints(false);
+                        }
                         augenSolo = augenZaehlen(augenSolo);
                     } else {
                         augenDuo = augenZaehlen(augenDuo);
@@ -190,16 +205,14 @@ public class Server implements Runnable {
                 stich.add(content);
                 if (gameturn < 31) {
                     //sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
-                    // FIXME NOT FIXME: GAMETURN MUSS EINFACH NUR VORHER ERHÖHT WERDEN...
                     gameturn++;
                     sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
                     System.out.println("Server-content: " + content);
-                    //gameturn++;
                 }
-                if (gameturn == 30) {
-                    // TODO 2. HIER REINFÜGEN
+                if (gameturn == 31) {
+                    setPoints(true);
                     // AUGEN ZÄHLEN
-                    // ENTSCHEIDEN WER GEWINNT UND IN DB DIE PUNKTE FÜRS JEWEILIGE anges. SPIEL EINTRAGEN
+                    // ENTSCHEIDEN WER GEWINNT UND IN DB DIE PUNKTE FÜRS JEWEILIGE angesagte SPIEL EINTRAGEN
                     // GEWINNER BEKANNTGEBEN
                     // KARTEN NEU MISCHEN UND AUSTEILEN
                 }
@@ -308,6 +321,7 @@ public class Server implements Runnable {
     }
 
 
+    // Entscheidet wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
         String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "BUBE", "ASS"};
         Map<String, Integer> wertung = new HashMap<>();
@@ -350,6 +364,41 @@ public class Server implements Runnable {
     }
 
 
+    // Berechnet den Spielwert des Solo-Spielers
+    private int spielWert() {
+        int count = 1;
+        List<String> buben = new ArrayList<>(Arrays.asList(this.buben.split(",")));
+        if(augenSolo > 90) count++;             // Spielstufe +1 bei Schneider
+        if(augenSolo == 120) count++;           // Spielstufe +1 bei Schwarz
+
+        if (handspiel) count++;                 // Spielstufe +1 bei Handspiel
+        if (buben.get(0).isEmpty()) {
+            for (String karte : buben) {        // Berechnung Spielstufe mit n-Buben spiel n+1
+                if (!karte.isEmpty()) count++;
+                else break;
+            }
+        }
+        else {
+            for(String karte: buben){           // Berechnung Spielstufe ohne n-Buben spiel n+1
+                if (karte.isEmpty()) count++;
+                else break;
+            }
+        }
+
+        // Spielstufe mit Grundwert multiplizieren
+        switch (trumpf){
+            case KREUZ -> count *= 12;
+            case PIK -> count += 11;
+            case HERZ -> count *= 10;
+            case KARO -> count *= 9;
+            case GRAND -> count += 24;
+            case NULL -> count = handspiel ? 35 : 23;
+        }
+        return count;
+    }
+
+
+    // zählt die Augen
     private int augenZaehlen(int augenWert) {
         Kartenwert kartenwert = new Kartenwert(trumpf);
         for (String karte : stich) {
@@ -357,6 +406,79 @@ public class Server implements Runnable {
         }
         stich.clear();
         return augenWert;
+    }
+
+
+    // Entscheidet wer gewonnen hat und verteilt die Punkte in DB
+    private void setPoints(boolean nullSieg) {
+        int spielwert = spielWert();
+        boolean win;
+        if (trumpf != Farbe.NULL) {
+            if (augenSolo > augenDuo) {
+                win = true;
+                switch (soloPlayer){
+                    case 0:
+                        helper.setRoundResults(timestamp, spielwert, 0, 0);
+                        break;
+                    case 1:
+                        helper.setRoundResults(timestamp, 0, spielwert, 0);
+                        break;
+                    case 2:
+                        helper.setRoundResults(timestamp, 0, 0, spielwert);
+                        break;
+                }
+            }
+            else {
+                win = false;
+                switch (soloPlayer){
+                    case 0:
+                        helper.setRoundResults(timestamp, spielwert * -2, 0, 0);
+                        break;
+                    case 1:
+                        helper.setRoundResults(timestamp, 0, spielwert * -2, 0);
+                        break;
+                    case 2:
+                        helper.setRoundResults(timestamp, 0, 0, spielwert * -2);
+                        break;
+                }
+            }
+        }
+        else {
+            if(nullSieg){
+                win = true;
+                switch (soloPlayer){
+                    case 0:
+                        helper.setRoundResults(timestamp, spielwert, 0, 0);
+                        break;
+                    case 1:
+                        helper.setRoundResults(timestamp, 0, spielwert, 0);
+                        break;
+                    case 2:
+                        helper.setRoundResults(timestamp, 0, 0, spielwert);
+                        break;
+                }
+            }
+            else {
+                win = false;
+                switch (soloPlayer){
+                    case 0:
+                        helper.setRoundResults(timestamp, spielwert * -2, 0, 0);
+                        break;
+                    case 1:
+                        helper.setRoundResults(timestamp, 0, spielwert * -2, 0);
+                        break;
+                    case 2:
+                        helper.setRoundResults(timestamp, 0, 0, spielwert * -2);
+                        break;
+                }
+            }
+        }
+        StringBuilder message = new StringBuilder();
+        if (win) message.append("WIN");
+        else message.append("LOSE");
+        message.append(";").append(soloPlayer).append(";").append(augenSolo).append(";").append(spielwert);
+        sendServerBroadcast(MessageType.OPEN_GAME, "");
+        sendServerBroadcast(MessageType.END_GAME, String.valueOf(message));
     }
 }
 

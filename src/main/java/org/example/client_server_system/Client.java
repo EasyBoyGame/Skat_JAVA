@@ -4,10 +4,7 @@ import org.example.game.GameWindow;
 import org.example.game_selection.GameSelection;
 import org.example.game_selection.panels.PanelType;
 import org.example.game_selection.panels.WaitingLobby;
-import org.example.logic.Farbe;
-import org.example.logic.Karte;
-import org.example.logic.Kartenart;
-import org.example.logic.SpielAuswahl;
+import org.example.logic.*;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -99,7 +96,13 @@ public class Client {
                             case START_SPIELAUSWAHL -> {
                                 SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
                             }
-                            case TRUMPF -> trumpf = Farbe.valueOf(content);
+                            case TRUMPF -> {
+                                trumpf = Farbe.valueOf(content);
+                                Mischen mischen = new Mischen();
+                                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
+                                gameWindow.updateButtonText();
+                            }
+                            case END_GAME -> showResult(content);
                         }
                     }
                 }
