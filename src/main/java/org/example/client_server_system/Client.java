@@ -6,6 +6,7 @@ import org.example.game_selection.panels.PanelType;
 import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -110,6 +111,15 @@ public class Client {
                 System.out.println("Disconnected from server.");
             }
         }).start();
+    }
+
+    private void showResult(String content) {
+        String[] parts = content.split(";");
+        String message = "";
+        message += parts[0].equals("WIN") ?
+                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen gewonnen => +" + parts[3] + " Punkte." :
+                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen verloren => -" + parts[3] + " Punkte.";
+        JOptionPane.showMessageDialog(gameWindow, message);
     }
 
 

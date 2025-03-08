@@ -3,6 +3,7 @@ package org.example.client_server_system;
 import org.example.database.DBHelper;
 import org.example.logic.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -177,6 +178,13 @@ public class Server implements Runnable {
                 sendServerBroadcast(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
             case OPEN_GAME:
+                if(!createTable) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+                    timestamp = LocalDateTime.now().format(formatter);
+                    helper.createTable(timestamp, usernames.get(0), usernames.get(1), usernames.get(2));
+                }
+                createTable = true;
+                handspiel = false;
                 gameturn = 1;
                 spreadCards();
                 startPlayer = (startPlayer + 1 > 2) ? 0 : +1;
@@ -221,6 +229,12 @@ public class Server implements Runnable {
                 this.trumpf = Farbe.valueOf(content);
                 sendServerBroadcast(MessageType.TRUMPF, content);
                 sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + gameturn) % 3);
+                break;
+            case BUBEN:
+                buben = content;
+                break;
+            case HANDSPIEL:
+                handspiel = true;
                 break;
             default:
                 System.out.println("Unknown message type.");

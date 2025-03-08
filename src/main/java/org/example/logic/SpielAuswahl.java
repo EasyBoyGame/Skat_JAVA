@@ -134,9 +134,7 @@ public class SpielAuswahl extends JFrame{
         jButton9.setText("Spiel ansagen");
         jButton9.setMargin(new Insets(2, 2, 2, 2));
         jButton9.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jButton9_ActionPerformed(evt);
-            }
+            public void actionPerformed(ActionEvent evt) { jButton8_ActionPerformed(evt); }
         });
         cp.add(jButton9);
         jButton9.setVisible(false);
@@ -201,14 +199,8 @@ public class SpielAuswahl extends JFrame{
 
     // Button Handspiel ansagen
     public void jButton8_ActionPerformed(ActionEvent evt) {
-        if (spielmodus == null){
-            JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
-            return;
-        }
-        client.sendPlayerActions(MessageType.TRUMPF, spielmodus.name());
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        gameWindow.setSpielstart(true);
+        client.sendPlayerActions(MessageType.HANDSPIEL, "");
+        jButton9_ActionPerformed(evt);
     }
 
 
