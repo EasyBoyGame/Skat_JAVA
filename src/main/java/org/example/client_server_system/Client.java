@@ -75,7 +75,7 @@ public class Client {
                         byte[] bytes = new byte[bytesRead];
                         buffer.get(bytes);
                         String message = new String(bytes).trim();
-                        System.out.println("Server: " + message);
+                        System.out.println("Server-message: " + message);
 
                         // teilt Nachricht in Typ und Inhalt auf
                         String[] parts = message.split(":", 2);
@@ -88,6 +88,7 @@ public class Client {
                             case UPDATE_LOBBY -> updateWaitingLobby(content);
                             case OPEN_GAME -> openGame(content);
                             case CARD_PLAYED -> {
+                                System.out.println("Client-content: " + content);
                                 parts = content.split(":");
                                 gameWindow.setSpielstart(true);
                                 gameWindow.cardPlayed(parts[0]);

@@ -32,6 +32,26 @@ public class Server implements Runnable {
     private Farbe trumpf;
 
 
+    // TODO 1. WENN DIE ERSTEN BEIDEN SPIELER NEIN REIZEN, DANN MUSS DER LETZTE SPIELER DEN SKAT
+    //  SOFORT BEKOMMEN (eigentlich nicht aber so wirds erstmal implementiert)
+
+    // TODO 2. SPIEL MUSS BEENDET WERDEN, SOBALD ALLE KARTEN GESPIELT WURDEN
+
+    // TODO 3. SOBALD SPIEL ANGESAGT WIRD (setSpielstart = true), MÜSSEN KARTEN BEI DUO ENTSPRECHEND
+    //  SORTIERT WERDEN
+
+    // TODO 4. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
+
+    // TODO 5. GESAMTEN CODE KOMMENTIEREN
+
+
+    // TODO EXTRA (wichtig?): DATENBANK IN LISTE AUSLESEN, UM NACH DEM SPIELEN EINE
+    //  SPIELAUSWERTUNG ZU HABEN
+
+    // TODO EXTRA: SPIELER DISCONNECT
+
+
+
     @Override
     public void run() {
         initServer();
@@ -154,13 +174,12 @@ public class Server implements Runnable {
                 break;
             case REIZEN:
                 reizen(content);
-                System.out.println("ES WURDE GEREIZT" + content);
                 break;
             case REIZ_ANTWORT:
                 reizenAntwort(content);
                 break;
             case CARD_PLAYED:
-                if (!(stich.size() < 3)) {
+                if (stich.size() > 2) {
                     int stichWin = vergleichStich(stich);
                     if (stichWin == soloPlayer) {
                         augenSolo = augenZaehlen(augenSolo);
@@ -169,16 +188,26 @@ public class Server implements Runnable {
                     }
                 }
                 stich.add(content);
-                if (gameturn < 30) {
-                    sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
-                    sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
-                    System.out.println(content);
+                if (gameturn < 31) {
+                    //sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
+                    // FIXME NOT FIXME: GAMETURN MUSS EINFACH NUR VORHER ERHÖHT WERDEN...
                     gameturn++;
+                    sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
+                    System.out.println("Server-content: " + content);
+                    //gameturn++;
+                }
+                if (gameturn == 30) {
+                    // TODO 2. HIER REINFÜGEN
+                    // AUGEN ZÄHLEN
+                    // ENTSCHEIDEN WER GEWINNT UND IN DB DIE PUNKTE FÜRS JEWEILIGE anges. SPIEL EINTRAGEN
+                    // GEWINNER BEKANNTGEBEN
+                    // KARTEN NEU MISCHEN UND AUSTEILEN
                 }
                 break;
             case TRUMPF:
                 this.trumpf = Farbe.valueOf(content);
                 sendServerBroadcast(MessageType.TRUMPF, content);
+                sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + gameturn) % 3);
                 break;
             default:
                 System.out.println("Unknown message type.");
@@ -280,7 +309,7 @@ public class Server implements Runnable {
 
 
     private int vergleichStich(List<String> karten) {
-        String[] reihenfolge = {"7", "8", "9", "10", "BUBE", "DAME", "KÖNIG", "ASS"};
+        String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "BUBE", "ASS"};
         Map<String, Integer> wertung = new HashMap<>();
         for (int i = 0; i < reihenfolge.length; i++) {
             wertung.put(reihenfolge[i], i);
