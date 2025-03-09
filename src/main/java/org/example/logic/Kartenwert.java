@@ -28,6 +28,17 @@ public class Kartenwert {
         }
     }
 
+    public int getFarbwert(String karte){
+        int result = 0;
+        switch (karte.split(" ")[0]){
+            case "KREUZ" -> result = 4;
+            case "PIK" -> result = 3;
+            case "HERZ" -> result = 2;
+            case "KARO" -> result = 1;
+        }
+        return result;
+    }
+
     public int getPunkte(Kartenart kartenart){
         switch(kartenart){
             case SIEBEN:

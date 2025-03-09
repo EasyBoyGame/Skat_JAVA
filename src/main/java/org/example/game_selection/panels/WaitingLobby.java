@@ -24,6 +24,7 @@ public class WaitingLobby extends JPanel {
         parentWindow.setResizable(false);
 
 
+        
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
 

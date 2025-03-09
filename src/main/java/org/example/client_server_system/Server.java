@@ -231,6 +231,9 @@ public class Server implements Runnable {
 
 
     private void startNewGame() {
+        reizen = new Reizen();
+        augenSolo = 0;
+        augenDuo = 0;
         handspiel = false;
         playedCards = 1;
         spreadCards();
@@ -347,22 +350,18 @@ public class Server implements Runnable {
         int index = stichWin;
         int gewinnerIndex = index;
         String bedient = karten.get(0).split(" ")[0];
+        if (istTrumpf(karten.get(0))) bedient = "TRUMPF";
         Kartenwert kartenwert = new Kartenwert(trumpf);
 
-        if (istTrumpf(karten.get(1)) &&
-                        !istTrumpf(gewinnerKarte) ||
-                istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&  karten.get(1).split(" ")[0].equals(bedient) &&
-                        kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1])) {
-
+        int cardPoints2 = cardToPoints(karten.get(1), bedient);
+        int cardPoints3 = cardToPoints(karten.get(2), bedient);
+        
+        if (cardToPoints(gewinnerKarte, bedient) < cardPoints2 || (cardToPoints(gewinnerKarte, bedient) == cardPoints2 && kartenwert.getFarbwert(gewinnerKarte) < kartenwert.getFarbwert(karten.get(1)))){
             gewinnerKarte = karten.get(1);
             gewinnerIndex = (index + 1) % 3;
         }
 
-        if (istTrumpf(karten.get(2)) &&
-                        !istTrumpf(gewinnerKarte) ||
-                istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) && karten.get(2).split(" ")[0].equals(bedient) &&
-                        kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1])) {
-
+        if (cardToPoints(gewinnerKarte, bedient) < cardPoints3 || (cardToPoints(gewinnerKarte, bedient) == cardPoints3 && kartenwert.getFarbwert(gewinnerKarte) < kartenwert.getFarbwert(karten.get(2)))){
             gewinnerKarte = karten.get(2);
             gewinnerIndex = (index + 2) % 3;
         }

@@ -106,6 +106,11 @@ public class Client {
                                     SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
                                 }
                                 case TRUMPF -> {
+                                    String ansageUser = "ERROR";
+                                    for (String[] info: WaitingLobby.getInstance().players) {
+                                        InetSocketAddress inetAddress = (InetSocketAddress) clientChannel.getRemoteAddress();
+                                        if (info[1].equals(inetAddress.getAddress().getHostAddress())) ansageUser = info[0];
+                                    }
                                     trumpf = Farbe.valueOf(content);
                                     Mischen mischen = new Mischen();
                                     gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));

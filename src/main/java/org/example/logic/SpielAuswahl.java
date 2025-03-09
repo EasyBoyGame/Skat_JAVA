@@ -123,7 +123,7 @@ public class SpielAuswahl extends JFrame {
         jButton9.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton9.setText("Spiel ansagen");
         jButton9.setMargin(new Insets(2, 2, 2, 2));
-        jButton9.addActionListener(this::jButton8_ActionPerformed);
+        jButton9.addActionListener(this::jButton9_ActionPerformed);
         cp.add(jButton9);
         jButton9.setVisible(false);
         jButton9.setEnabled(false);
