@@ -26,6 +26,7 @@ public class Server implements Runnable {
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
     private List<String> stich = new ArrayList<>();
+    String skat;
     private int augenSolo;          // Augen des Solospielers
     private int augenDuo;           // Augen des Teams
     private Reizen reizen;
@@ -42,17 +43,15 @@ public class Server implements Runnable {
 
 
 
-    // TODO 2. REIZEN NEU STARTEN, NACHDEM ALLE KARTEN GESPIELT WURDEN
+    // TODO 2. REIZEN NEU STARTEN, NACHDEM ALLE KARTEN GESPIELT WURDEN -- FINISHED??
 
     // TODO 3. SKAT WEGDRÜCKEN
 
-    // TODO 4. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
+    // TODO 4. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN -- FUNKTIONIERT FÜR HANDSPIEL
 
-    // TODO 5. GESAMTEN CODE KOMMENTIEREN
+    // TODO 5. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
 
-    // TODO 6. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
-
-    // TODO 7. IST BEDIENT??!! (BEIM KARTENVERGLEICH)
+    // TODO 6. GESAMTEN CODE KOMMENTIEREN
 
 
     // TODO EXTRA: NULL HAND PUNKT AUSZÄHLEN NICHT IMPLEMENTIERT
@@ -185,14 +184,7 @@ public class Server implements Runnable {
                     helper.createTable(timestamp, usernames.get(0), usernames.get(1), usernames.get(2));
                 }
                 createTable = true;
-                handspiel = false;
-                playedCards = 1;
-                spreadCards();
-                startPlayer = (startPlayer + 1) % 3;
-                reizPlayer = (startPlayer + 2) % 3;
-                answPlayer = (startPlayer + 1) % 3;
-                stichWin = (startPlayer + 1) % 3;
-                sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
+                startNewGame();
                 break;
             case REIZEN:
                 reizen(content);
@@ -217,15 +209,12 @@ public class Server implements Runnable {
                 System.out.println("Augensolo: " + augenSolo);
                 System.out.println("Augenduo: " + augenDuo);
                 if (playedCards < 31) {
-                    //sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
                     playedCards++;
                     sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + stichWin);
                     System.out.println("Server-content: " + content);
                 }
                 if (playedCards == 31) {
                     setPoints(true);
-                    // ENTSCHEIDEN WER GEWINNT UND IN DB DIE PUNKTE FÜRS JEWEILIGE angesagte SPIEL EINTRAGEN
-                    // TODO KARTEN NEU MISCHEN UND AUSTEILEN
                 }
                 break;
             case TRUMPF:
@@ -238,10 +227,23 @@ public class Server implements Runnable {
                 break;
             case HANDSPIEL:
                 handspiel = true;
+                skat = content;
                 break;
             default:
                 System.out.println("Unknown message type.");
         }
+    }
+
+
+    private void startNewGame(){
+        handspiel = false;
+        playedCards = 1;
+        spreadCards();
+        startPlayer = (startPlayer + 1) % 3;
+        reizPlayer = (startPlayer + 2) % 3;
+        answPlayer = (startPlayer + 1) % 3;
+        stichWin = (startPlayer + 1) % 3;
+        sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
     }
 
 
@@ -288,7 +290,7 @@ public class Server implements Runnable {
             for (Karte karte : karten) {
                 builder.append(karte).append(",");
             }
-            builder.append(":");    // ':' zur Trennung von Skat und den Spielkarten
+            builder.append(":");    // : zur Trennung von Skat und den Spielkarten
             for (Karte karte : skat) {
                 builder.append(karte).append(",");
             }
@@ -349,19 +351,28 @@ public class Server implements Runnable {
         String gewinnerKarte = karten.get(0);
         int index = stichWin;
         int gewinnerIndex = index;
+        String bedient = karten.get(0).split(" ")[0];
         Kartenwert kartenwert = new Kartenwert(trumpf);
 
 
-        if(istTrumpf(karten.get(1)) && !istTrumpf(gewinnerKarte) ||
-                (istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&
-                        kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
+        if(karten.get(1).split(" ")[0].equals(bedient) &&
+                kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]) ||
+        istTrumpf(karten.get(1)) &&
+                !istTrumpf(gewinnerKarte) ||
+        istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&
+                kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1])){
+
             gewinnerKarte = karten.get(1);
             gewinnerIndex = (index + 1) % 3;
         }
 
-        if(istTrumpf(karten.get(2)) && !istTrumpf(gewinnerKarte) ||
-                (istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) &&
-                        kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
+        if(karten.get(2).split(" ")[0].equals(bedient) &&
+                kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]) ||
+        istTrumpf(karten.get(2)) &&
+                !istTrumpf(gewinnerKarte) ||
+        (istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) &&
+                kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
+
             gewinnerKarte = karten.get(2);
             gewinnerIndex = (index + 2) % 3;
         }
@@ -418,6 +429,11 @@ public class Server implements Runnable {
     // zählt die Augen
     private int augenZaehlen(int augenWert) {
         Kartenwert kartenwert = new Kartenwert(trumpf);
+        if(handspiel && playedCards == 31){
+            String skat1 = skat.split(",")[0].split(" ")[1];
+            String skat2 = skat.split(",")[1].split(" ")[1];
+            augenSolo += kartenwert.getPunkte(Kartenart.valueOf(skat1)) + kartenwert.getPunkte(Kartenart.valueOf(skat2));
+        }
         for (String karte : stich) {
             augenWert += kartenwert.getPunkte(Kartenart.valueOf(karte.split(" ")[1]));
         }
@@ -426,7 +442,7 @@ public class Server implements Runnable {
     }
 
 
-    // Entscheidet wer gewonnen hat und verteilt die Punkte in der DB
+    // Entscheidet, wer gewonnen hat und verteilt die Punkte in der DB
     private void setPoints(boolean nullSieg) {
         int spielwert = spielWert();
         boolean win;
@@ -494,7 +510,7 @@ public class Server implements Runnable {
         if (win) message.append("WIN");
         else message.append("LOSE");
         message.append(";").append(soloPlayer).append(";").append(augenSolo).append(";").append(spielwert);
-        spreadCards();
+        startNewGame();
         sendServerBroadcast(MessageType.END_GAME, String.valueOf(message));
     }
 }

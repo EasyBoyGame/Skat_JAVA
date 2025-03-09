@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.WindowEvent;
-import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpielAuswahl extends JFrame{
@@ -142,6 +140,7 @@ public class SpielAuswahl extends JFrame{
         //endregion
 
         setVisible(true);
+        this.setAlwaysOnTop(true);
     }
 
 
@@ -164,7 +163,7 @@ public class SpielAuswahl extends JFrame{
         jButton8.setEnabled(false);
         jButton9.setVisible(true);
         jButton9.setEnabled(true);
-        gameWindow.enableButton();
+        gameWindow.enableSkatButton();
 
         // Skat wird zum Kartendeck hinzugefügt
         List<Karte> deck = gameWindow.getDeck();
@@ -199,7 +198,7 @@ public class SpielAuswahl extends JFrame{
 
     // Button Handspiel ansagen
     public void jButton8_ActionPerformed(ActionEvent evt) {
-        client.sendPlayerActions(MessageType.HANDSPIEL, "");
+        client.sendPlayerActions(MessageType.HANDSPIEL, String.join(",", gameWindow.getSkat().toString()));
         jButton9_ActionPerformed(evt);
     }
 

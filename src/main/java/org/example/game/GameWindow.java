@@ -9,21 +9,20 @@ import org.example.logic.Karte;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameWindow extends JFrame {
 
-    private JButton jButton1 = new JButton();   // deck Karte 1
-    private JButton jButton2 = new JButton();   // deck Karte 2
-    private JButton jButton3 = new JButton();   // deck Karte 3
-    private JButton jButton4 = new JButton();   // deck Karte 4
-    private JButton jButton5 = new JButton();   // deck Karte 5
-    private JButton jButton6 = new JButton();   // deck Karte 6
-    private JButton jButton7 = new JButton();   // deck Karte 7
-    private JButton jButton8 = new JButton();   // deck Karte 8
-    private JButton jButton9 = new JButton();   // deck Karte 9
-    private JButton jButton10 = new JButton();  // deck Karte 10
+    private JButton jButton1 = new JButton();   // Deck Karte 1
+    private JButton jButton2 = new JButton();   // Deck Karte 2
+    private JButton jButton3 = new JButton();   // Deck Karte 3
+    private JButton jButton4 = new JButton();   // Deck Karte 4
+    private JButton jButton5 = new JButton();   // Deck Karte 5
+    private JButton jButton6 = new JButton();   // Deck Karte 6
+    private JButton jButton7 = new JButton();   // Deck Karte 7
+    private JButton jButton8 = new JButton();   // Deck Karte 8
+    private JButton jButton9 = new JButton();   // Deck Karte 9
+    private JButton jButton10 = new JButton();  // Deck Karte 10
     private JButton jButton11 = new JButton();  // Skat Karte 1
     private JButton jButton12 = new JButton();  // Skat Karte 2
     private JButton jButton14 = new JButton();  // reizen ja
@@ -40,7 +39,6 @@ public class GameWindow extends JFrame {
     private List<Karte> skat;
     private Client client;
     private String[][] players;
-    private boolean reizen = true;
     private boolean spielstart = false;
     private boolean reizAntwort = false;
 
@@ -59,7 +57,7 @@ public class GameWindow extends JFrame {
         int x = (d.width - getSize().width) / 2;
         int y = (d.height - getSize().height) / 2;
         setLocation(x, y);
-        setTitle("GameWindow - " + client.getUsername());
+        setTitle("SKAT - " + client.getUsername());
         setResizable(false);
         Container cp = getContentPane();
         cp.setLayout(null);
@@ -262,7 +260,7 @@ public class GameWindow extends JFrame {
                 label.setText("");
             }
         }
-        cardPlaces[(client.getPlayerTurn() +2) % 3].setText(content);
+        cardPlaces[client.getPlayerTurn()].setText(content);
     }
 
 
@@ -274,7 +272,7 @@ public class GameWindow extends JFrame {
     }
 
 
-    public void enableButton() {
+    public void enableSkatButton() {
         jButton11.setEnabled(true);
         jButton11.setVisible(true);
         jButton12.setEnabled(true);
