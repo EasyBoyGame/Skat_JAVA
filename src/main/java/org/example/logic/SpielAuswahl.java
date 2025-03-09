@@ -222,7 +222,18 @@ public class SpielAuswahl extends JFrame {
         buben += checkForBube("PIK") ? "PIK BUBE," : ",";
         buben += checkForBube("KARO") ? "KARO BUBE" : "";
 
-        return buben.toString();
+        return buben;
+    }
+
+
+    private boolean checkForBube(String farbe) {
+        boolean result = false;
+        for (int i = 0; i < 4; i++) {
+            if (deck.get(i).toString().equals(farbe + " BUBE")){
+                result = true;
+            }
+        }
+        return result;
     }
 
 

@@ -364,12 +364,10 @@ public class Server implements Runnable {
             gewinnerIndex = (index + 1) % 3;
         }
 
-        if (karten.get(2).split(" ")[0].equals(bedient) &&
-                kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]) ||
-                istTrumpf(karten.get(2)) &&
+        if (istTrumpf(karten.get(2)) &&
                         !istTrumpf(gewinnerKarte) ||
-                (istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) &&
-                        kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))) {
+                istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) && karten.get(2).split(" ")[0].equals(bedient) &&
+                        kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1])) {
 
             gewinnerKarte = karten.get(2);
             gewinnerIndex = (index + 2) % 3;
