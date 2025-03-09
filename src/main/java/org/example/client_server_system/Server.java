@@ -355,12 +355,9 @@ public class Server implements Runnable {
         String bedient = karten.get(0).split(" ")[0];
         Kartenwert kartenwert = new Kartenwert(trumpf);
 
-
-        if (karten.get(1).split(" ")[0].equals(bedient) &&
-                kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]) ||
-                istTrumpf(karten.get(1)) &&
+        if (istTrumpf(karten.get(1)) &&
                         !istTrumpf(gewinnerKarte) ||
-                istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&
+                istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&  karten.get(1).split(" ")[0].equals(bedient) &&
                         kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1])) {
 
             gewinnerKarte = karten.get(1);
@@ -393,8 +390,8 @@ public class Server implements Runnable {
     private int spielWert() {
         int count = 1;
         List<String> buben = new ArrayList<>(Arrays.asList(this.buben.split(",")));
-        if (augenSolo > 90) count++;             // Spielstufe +1 bei Schneider
-        if (augenSolo == 120) count++;           // Spielstufe +1 bei Schwarz
+        if (augenSolo > 90 || augenSolo < 30) count++;             // Spielstufe +1 bei Schneider
+        if (augenSolo == 120 || augenSolo == 0) count++;           // Spielstufe +1 bei Schwarz
 
         if (handspiel) count++;                 // Spielstufe +1 bei Handspiel
         if (buben.isEmpty()) count += 4;

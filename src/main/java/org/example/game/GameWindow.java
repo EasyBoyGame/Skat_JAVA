@@ -39,7 +39,7 @@ public class GameWindow extends JFrame {
     private JLabel jLabel2 = new JLabel();
     private JLabel[] cardPlaces = new JLabel[3];
     private List<Karte> deck;
-    private List<Karte> skat;
+    public List<Karte> skat;
     private Client client;
     private String[][] players;
     private boolean spielstart = false;
@@ -248,7 +248,8 @@ public class GameWindow extends JFrame {
     public void buttonActionPerformed(ActionEvent evt) {
         if(skatDruecken && skatCount < 2){
             JButton button = (JButton) evt.getSource();
-            skat = new ArrayList<>();
+            button.setVisible(false);
+            button.setEnabled(false);
             skat.add(new Karte(Farbe.valueOf(button.getText().split(" ")[0]), Kartenart.valueOf(button.getText().split(" ")[1])));
             skatCount++;
             if(skatCount == 2) client.sendPlayerActions(MessageType.SKAT_SENDEN, skat.get(0).toString() + "," + skat.get(1).toString());

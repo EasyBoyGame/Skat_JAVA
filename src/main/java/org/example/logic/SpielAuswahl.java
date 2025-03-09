@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpielAuswahl extends JFrame {
@@ -146,7 +147,6 @@ public class SpielAuswahl extends JFrame {
 
     // Button Skat aufnehmen
     public void jButton7_ActionPerformed(ActionEvent evt) {
-        gameWindow.skatDruecken = true;
         jButton7.setVisible(false);
         jButton7.setEnabled(false);
         jButton8.setVisible(false);
@@ -183,6 +183,8 @@ public class SpielAuswahl extends JFrame {
         client.sendPlayerActions(MessageType.BUBEN, getBuben());
 
         gameWindow.updateButtonText();
+        gameWindow.skatDruecken = true;
+        gameWindow.skat = new ArrayList<>();
     }
 
 
@@ -214,13 +216,11 @@ public class SpielAuswahl extends JFrame {
 
     // holt sich die Buben des Solo-Spielers
     public String getBuben() {
-        StringBuilder buben = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            if (deck.get(i).toString().split(" ")[1].equals("BUBE")) {
-                buben.append(deck.get(i).toString()).append(",");
-            } else buben.append(",");
-        }
-        if (!buben.isEmpty()) buben.deleteCharAt(buben.length() - 1);
+        String buben = "";
+        buben += checkForBube("KREUZ") ? "KREUZ BUBE," : ",";
+        buben += checkForBube("HERZ") ? "HERZ BUBE," : ",";
+        buben += checkForBube("PIK") ? "PIK BUBE," : ",";
+        buben += checkForBube("KARO") ? "KARO BUBE" : "";
 
         return buben.toString();
     }
