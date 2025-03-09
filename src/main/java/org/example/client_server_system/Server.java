@@ -30,13 +30,15 @@ public class Server implements Runnable {
     private int augenDuo;           // Augen des Teams
     private Reizen reizen;
     private final int MAX_PLAYERS = 3;
-    private int gameturn;
-    private int startPlayer = 2;
-    private int reizPlayer;
-    private int answPlayer;
-    private Farbe trumpf;
-    private String buben;
-    private boolean handspiel;
+    private int playedCards;        // gespielte Karten (-anzahl)
+    private int soloPlayer;         //
+    private int playerTurn;         // ausspielender
+    private int startPlayer = 2;    // Kartengeber
+    private int reizPlayer;         // reizende (sagen)
+    private int answPlayer;         // reiz antwortende (hören)
+    private Farbe trumpf;           // das angesagte Spiel
+    private String buben;           // Buben des Alleinspielers für die Punkteauswertung
+    private boolean handspiel;      // gibt an, ob Handspiel angesagt wurde
 
 
 
@@ -188,9 +190,10 @@ public class Server implements Runnable {
                 handspiel = false;
                 playedCards = 1;
                 spreadCards();
-                startPlayer = (startPlayer + 1 > 2) ? 0 : +1;
+                startPlayer = (startPlayer + 1) % 3;
                 reizPlayer = (startPlayer + 2) % 3;
                 answPlayer = (startPlayer + 1) % 3;
+                playerTurn = startPlayer;
                 sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
                 break;
             case REIZEN:
@@ -218,8 +221,8 @@ public class Server implements Runnable {
                 System.out.println("Augenduo: " + augenDuo);
                 if (playedCards < 31) {
                     //sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
-                    gameturn++;
-                    sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
+                    playedCards++;
+                    sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + stichWin);
                     System.out.println("Server-content: " + content);
                 }
                 if (playedCards == 31) {
@@ -249,8 +252,14 @@ public class Server implements Runnable {
         if (content.equals("true")) {
             sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
         } else {
-            soloPlayer = reizPlayer;
-            sendServerMessage(clients.get(reizPlayer), MessageType.START_SPIELAUSWAHL, "");
+            if (reizPlayer == startPlayer){
+                soloPlayer = reizPlayer;
+                sendServerMessage(clients.get(reizPlayer), MessageType.START_SPIELAUSWAHL, "");
+            } else {
+                answPlayer = reizPlayer;
+                reizPlayer = startPlayer;
+                sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
+            }
         }
     }
 
