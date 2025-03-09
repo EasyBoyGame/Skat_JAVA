@@ -269,12 +269,6 @@ public class GameWindow extends JFrame {
 
     public void cardPlayed(String content) {
         if (content.isEmpty()) return;
-        int currentTurn = client.getPlayerTurn();
-        if (players[currentTurn][0].equals(client.getUsername())){
-            enableAllButton(true);
-        } else {
-            enableAllButton(false);
-        }
         if (!cardPlaces[2].getText().isEmpty() && !cardPlaces[1].getText().isEmpty() && !cardPlaces[0].getText().isEmpty()){
             for (JLabel label: cardPlaces) {
                 label.setText("");
@@ -291,8 +285,17 @@ public class GameWindow extends JFrame {
         jButton15.setVisible(true);
     }
 
-    
-    private void enableAllButton(boolean bool) {
+
+    public void enableButtons(){
+        int currentTurn = client.getPlayerTurn();
+        if (players[currentTurn][0].equals(client.getUsername())){
+            setButtonEnable(true);
+        } else {
+            setButtonEnable(false);
+        }
+    }
+
+    private void setButtonEnable(boolean bool) {
         jButton1.setEnabled(bool);
         jButton2.setEnabled(bool);
         jButton3.setEnabled(bool);

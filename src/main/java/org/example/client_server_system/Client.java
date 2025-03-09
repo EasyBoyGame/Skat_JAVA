@@ -95,8 +95,9 @@ public class Client {
                                     System.out.println("Client-content: " + content);
                                     parts = content.split(":");
                                     gameWindow.setSpielstart(true);
-                                    playerTurn = Integer.parseInt(parts[1]);
                                     gameWindow.cardPlayed(parts[0]);
+                                    playerTurn = Integer.parseInt(parts[1]);
+                                    gameWindow.enableButtons();
                                 }
                                 case REIZEN -> gameWindow.enableReizen(content, false);
                                 case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
