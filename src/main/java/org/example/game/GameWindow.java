@@ -64,6 +64,51 @@ public class GameWindow extends JFrame {
         Container cp = getContentPane();
         cp.setLayout(null);
 
+
+        //region jLabel
+        String myName = client.getUsername();
+        String username1;
+        String username2;
+        int userindex;
+        if (players[0][0].equals(myName)) {
+            username1 = players[1][0];
+            username2 = players[2][0];
+            userindex = 0;
+        } else if (players[1][0].equals(myName)) {
+            username2 = players[0][0];
+            username1 = players[2][0];
+            userindex = 1;
+        } else {
+            username1 = players[0][0];
+            username2 = players[1][0];
+            userindex = 2;
+        }
+
+        // Label oben links
+        jLabelCard1.setBounds(384, 64, 136, 137);
+        cp.add(jLabelCard1);
+        cardPlaces[(userindex) % 3] = jLabelCard1;
+
+        // Label oben rechts
+        jLabelCard2.setBounds(744, 64, 136, 137);
+        cp.add(jLabelCard2);
+        cardPlaces[(1 + userindex) % 3] = jLabelCard2;
+
+        // Label unten mitte
+        jLabelCard3.setBounds(568, 256, 136, 137);
+        cp.add(jLabelCard3);
+        cardPlaces[(2 + userindex) % 3] = jLabelCard3;
+
+        jLabel1.setBounds(400, 16, 80, 24);
+        jLabel1.setFont(new Font("Dialog", Font.BOLD, 11));
+        jLabel1.setText(username1);
+        cp.add(jLabel1);
+        jLabel2.setBounds(768, 16, 80, 24);
+        jLabel2.setFont(new Font("Dialog", Font.BOLD, 11));
+        jLabel2.setText(username2);
+        cp.add(jLabel2);
+        //endregion
+
         //region Karten
         jButton1.setBounds(12, 401, 93, 141);
         jButton1.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -163,26 +208,6 @@ public class GameWindow extends JFrame {
         jButton15.addActionListener(this::reizen_ActionPerformed);
         cp.add(jButton15);
         jButton15.setVisible(false);
-        //endregion
-
-        //region jLabel
-        jLabelCard1.setBounds(384, 56, 136, 137);
-        cp.add(jLabelCard1);
-        cardPlaces[0] = jLabelCard1;
-        jLabelCard2.setBounds(744, 64, 136, 137);
-        cp.add(jLabelCard2);
-        cardPlaces[1] = jLabelCard2;
-        jLabelCard3.setBounds(568, 256, 136, 137);
-        cp.add(jLabelCard3);
-        cardPlaces[2] = jLabelCard3;
-        jLabel1.setBounds(400, 16, 80, 24);
-        jLabel1.setFont(new Font("Dialog", Font.BOLD, 11));
-        jLabel1.setText("Spieler 2");
-        cp.add(jLabel1);
-        jLabel2.setBounds(768, 16, 80, 24);
-        jLabel2.setFont(new Font("Dialog", Font.BOLD, 11));
-        jLabel2.setText("Spieler 3");
-        cp.add(jLabel2);
         //endregion
 
         //region unknown Canvas

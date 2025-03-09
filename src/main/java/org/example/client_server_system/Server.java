@@ -32,7 +32,7 @@ public class Server implements Runnable {
     private final int MAX_PLAYERS = 3;
     private int playedCards;        // gespielte Karten (-anzahl)
     private int soloPlayer;         //
-    private int playerTurn;         // ausspielender
+    private int stichWin;         // ausspielender
     private int startPlayer = 2;    // Kartengeber
     private int reizPlayer;         // reizende (sagen)
     private int answPlayer;         // reiz antwortende (hören)
@@ -202,8 +202,7 @@ public class Server implements Runnable {
                 break;
             case CARD_PLAYED:
                 stich.add(content);
-                int stichWin = (playerTurn + 1) % 3;
-                playerTurn = (playerTurn + 1) % 3;
+                stichWin = (this.stichWin + 1) % 3;
                 if (stich.size() > 2) {
                     stichWin = vergleichStich(stich);
                     if (stichWin == soloPlayer) {
@@ -347,74 +346,33 @@ public class Server implements Runnable {
 
     // Entscheidet, wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
-        // Normale Reihenfolge für Trumpfspiele
-        String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "ASS", "BUBE"};
-        Map<String, Integer> wertung = new HashMap<>();
-        for (int i = 0; i < reihenfolge.length; i++) {
-            wertung.put(reihenfolge[i], i);
+        String gewinnerKarte = karten.get(0);
+        int index = stichWin;
+        int gewinnerIndex = index;
+        Kartenwert kartenwert = new Kartenwert(trumpf);
+
+        // TODO IST BEDIENT??
+        if(istTrumpf(karten.get(1)) && !istTrumpf(gewinnerKarte) ||
+                (istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&
+                        kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
+            gewinnerKarte = karten.get(1);
+            gewinnerIndex = (index + 1) % 3;
         }
 
-        // Nullspiel-Reihenfolge: Sieben < Acht < Neun < Zehn < Bube < Dame < König < Ass
-        String[] nullReihenfolge = {"SIEBEN", "ACHT", "NEUN", "ZEHN", "BUBE", "DAME", "KOENIG", "ASS"};
-        Map<String, Integer> nullWertung = new HashMap<>();
-        for (int i = 0; i < nullReihenfolge.length; i++) {
-            nullWertung.put(nullReihenfolge[i], i);
+        if(istTrumpf(karten.get(2)) && !istTrumpf(gewinnerKarte) ||
+                (istTrumpf(karten.get(2)) == istTrumpf(gewinnerKarte) &&
+                        kartenwert.kartenWertigkeit.get(karten.get(2).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
+            gewinnerKarte = karten.get(2);
+            gewinnerIndex = (index + 2) % 3;
         }
 
-        // Buben haben eine eigene Rangfolge, unabhängig von Trumpf
-        Map<String, Integer> bubenWertung = Map.of("KREUZ", 4, "PIK", 3, "HERZ", 2, "KARO", 1);
-
-        String angespielteFarbe = karten.get(0).split(" ")[0];
-        int gewinnerIndex = 0;
-        String besteKarte = karten.get(0);
-
-        for (int i = 1; i < karten.size(); i++) {
-            String[] karte = karten.get(i).split(" ");
-            String farbe = karte[0];
-            String wert = karte[1];
-
-            String[] beste = besteKarte.split(" ");
-            String besteFarbe = beste[0];
-            String besteWert = beste[1];
-
-            boolean aktuelleIstBube = wert.equals("BUBE");
-            boolean besteIstBube = besteWert.equals("BUBE");
-
-            boolean aktuelleIstTrumpf = farbe.equals(trumpf.name()) || aktuelleIstBube;
-            boolean besteIstTrumpf = besteFarbe.equals(trumpf.name()) || besteIstBube;
-
-            if (trumpf.name().equals("NULL")) {
-                // Nullspiel: niedrigere Karte gewinnt
-                if (farbe.equals(angespielteFarbe) && nullWertung.get(wert) < nullWertung.get(besteWert)) {
-                    gewinnerIndex = i;
-                    besteKarte = karten.get(i);
-                }
-            } else {
-                // Trumpfregelung mit Buben beachten
-                if (aktuelleIstBube && besteIstBube) {
-                    // Beide Karten sind Buben → Buben-Rangfolge entscheidet
-                    if (bubenWertung.get(farbe) > bubenWertung.get(besteFarbe)) {
-                        gewinnerIndex = i;
-                        besteKarte = karten.get(i);
-                    }
-                } else if (aktuelleIstBube && !besteIstBube) {
-                    // Nur die aktuelle Karte ist ein Bube → gewinnt automatisch
-                    gewinnerIndex = i;
-                    besteKarte = karten.get(i);
-                } else if (!aktuelleIstBube && besteIstBube) {
-                    // Die bisher beste Karte ist ein Bube → bleibt Sieger
-                    continue;
-                } else if ((aktuelleIstTrumpf && !besteIstTrumpf) ||
-                        (aktuelleIstTrumpf == besteIstTrumpf && farbe.equals(besteFarbe) && wertung.get(wert) > wertung.get(besteWert))) {
-                    // Normale Trumpf-/Farbregelung
-                    gewinnerIndex = i;
-                    besteKarte = karten.get(i);
-                }
-            }
-        }
         return gewinnerIndex;
     }
 
+
+    private boolean istTrumpf(String karte) {
+        return Farbe.valueOf(karte.split(" ")[0]) == trumpf;
+    }
 
 
     // Berechnet den Spielwert des Solo-Spielers

@@ -42,13 +42,13 @@ public class MainPanel extends JPanel {
             Server server = new Server(port);
             new Thread(server).start();
             try {
-                Thread.sleep(500);
+                //Thread.sleep(500);
                 Client client = new Client(username1, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(500);
+                //Thread.sleep(500);
                 Client client2 = new Client(username2, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(500);
+                //Thread.sleep(500);
                 Client client3 = new Client(username3, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-            } catch (InterruptedException | UnknownHostException ex) {
+            } catch (/*InterruptedException | */UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }
         });
