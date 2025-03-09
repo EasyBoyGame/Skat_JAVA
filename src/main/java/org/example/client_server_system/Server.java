@@ -42,15 +42,9 @@ public class Server implements Runnable {
     private boolean handspiel;      // gibt an, ob Handspiel angesagt wurde
 
 
-    // TODO 2. REIZEN NEU STARTEN, NACHDEM ALLE KARTEN GESPIELT WURDEN -- FINISHED??
+    // TODO 1. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
 
-    // TODO 3. SKAT WEGDRÜCKEN
-
-    // TODO 4. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN -- FUNKTIONIERT FÜR HANDSPIEL
-
-    // TODO 5. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
-
-    // TODO 6. GESAMTEN CODE KOMMENTIEREN
+    // TODO 2. GESAMTEN CODE KOMMENTIEREN
 
 
     // TODO EXTRA: NULL HAND PUNKT AUSZÄHLEN NICHT IMPLEMENTIERT
@@ -377,6 +371,18 @@ public class Server implements Runnable {
     }
 
 
+    private int cardToPoints(String karte, String bedient) {
+        Kartenwert kartenwert = new Kartenwert(trumpf);
+        int points = 0;
+        if (istTrumpf(karte)) points += 20;
+        else if (!bedient.equals("TRUMPF")){
+            if (karte.split(" ")[0].equals(bedient)) points += 10;
+        }
+        points += kartenwert.kartenWertigkeit.get(karte.split(" ")[1]);
+        return points;
+    }
+    
+
     private boolean istTrumpf(String karte) {
         if (trumpf.name().equals("NULL")) return false;
         if (karte.split(" ")[1].equals("BUBE")) return true;
@@ -388,7 +394,7 @@ public class Server implements Runnable {
     private int spielWert() {
         int count = 1;
         List<String> buben = new ArrayList<>(Arrays.asList(this.buben.split(",")));
-        if (augenSolo > 90 || augenSolo < 30) count++;             // Spielstufe +1 bei Schneider
+        if (augenSolo >= 90 || augenSolo <= 30) count++;             // Spielstufe +1 bei Schneider
         if (augenSolo == 120 || augenSolo == 0) count++;           // Spielstufe +1 bei Schwarz
 
         if (handspiel) count++;                 // Spielstufe +1 bei Handspiel

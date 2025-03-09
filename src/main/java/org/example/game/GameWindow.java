@@ -16,20 +16,20 @@ import java.util.List;
 
 public class GameWindow extends JFrame {
 
-    private JButton jButton1 = new JButton();   // Deck Karte 1
-    private JButton jButton2 = new JButton();   // Deck Karte 2
-    private JButton jButton3 = new JButton();   // Deck Karte 3
-    private JButton jButton4 = new JButton();   // Deck Karte 4
-    private JButton jButton5 = new JButton();   // Deck Karte 5
-    private JButton jButton6 = new JButton();   // Deck Karte 6
-    private JButton jButton7 = new JButton();   // Deck Karte 7
-    private JButton jButton8 = new JButton();   // Deck Karte 8
-    private JButton jButton9 = new JButton();   // Deck Karte 9
-    private JButton jButton10 = new JButton();  // Deck Karte 10
-    private JButton jButton11 = new JButton();  // Skat Karte 1
-    private JButton jButton12 = new JButton();  // Skat Karte 2
-    private JButton jButton14 = new JButton();  // reizen ja
-    private JButton jButton15 = new JButton();  // reizen nein
+    private final JButton jButton1 = new JButton();   // Deck Karte 1
+    private final JButton jButton2 = new JButton();   // Deck Karte 2
+    private final JButton jButton3 = new JButton();   // Deck Karte 3
+    private final JButton jButton4 = new JButton();   // Deck Karte 4
+    private final JButton jButton5 = new JButton();   // Deck Karte 5
+    private final JButton jButton6 = new JButton();   // Deck Karte 6
+    private final JButton jButton7 = new JButton();   // Deck Karte 7
+    private final JButton jButton8 = new JButton();   // Deck Karte 8
+    private final JButton jButton9 = new JButton();   // Deck Karte 9
+    private final JButton jButton10 = new JButton();  // Deck Karte 10
+    private final JButton jButton11 = new JButton();  // Skat Karte 1
+    private final JButton jButton12 = new JButton();  // Skat Karte 2
+    private final JButton jButton14 = new JButton();  // reizen ja
+    private final JButton jButton15 = new JButton();  // reizen nein
     private JLabel jLabelCard1 = new JLabel();
     private JLabel jLabelCard2 = new JLabel();
     private JLabel jLabelCard3 = new JLabel();
@@ -354,11 +354,6 @@ public class GameWindow extends JFrame {
 
     public List<Karte> getDeck() {
         return deck;
-    }
-
-
-    public void setSkat(List<Karte> skat) {
-        this.skat = skat;
     }
 
 

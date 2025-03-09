@@ -13,6 +13,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Client {
@@ -109,6 +110,7 @@ public class Client {
                                     Mischen mischen = new Mischen();
                                     gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
                                     gameWindow.updateButtonText();
+                                    JOptionPane.showMessageDialog(gameWindow, "Spieler " + ansageUser + " spielt " + trumpf.name());
                                 }
                                 case END_GAME -> showResult(content);
                             }
@@ -121,12 +123,13 @@ public class Client {
         }).start();
     }
 
+
     private void showResult(String content) {
         String[] parts = content.split(";");
         String message = "";
         message += parts[0].equals("WIN") ?
                 WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen gewonnen => +" + parts[3] + " Punkte." :
-                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen verloren => -" + parts[3] + " Punkte.";
+                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen verloren => --" + Integer.parseInt(parts[3]) * 2 + " Punkte.";
         JOptionPane.showMessageDialog(gameWindow, message);
     }
 

@@ -218,8 +218,8 @@ public class SpielAuswahl extends JFrame {
     public String getBuben() {
         String buben = "";
         buben += checkForBube("KREUZ") ? "KREUZ BUBE," : ",";
-        buben += checkForBube("HERZ") ? "HERZ BUBE," : ",";
         buben += checkForBube("PIK") ? "PIK BUBE," : ",";
+        buben += checkForBube("HERZ") ? "HERZ BUBE," : ",";
         buben += checkForBube("KARO") ? "KARO BUBE" : "";
 
         return buben;
