@@ -371,6 +371,8 @@ public class Server implements Runnable {
 
 
     private boolean istTrumpf(String karte) {
+        if(trumpf.name().equals("NULL")) return false;
+        if (karte.split(" ")[1].equals("BUBE")) return true;
         return Farbe.valueOf(karte.split(" ")[0]) == trumpf;
     }
 
