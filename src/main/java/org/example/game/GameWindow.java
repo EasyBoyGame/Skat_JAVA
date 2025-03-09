@@ -82,20 +82,20 @@ public class GameWindow extends JFrame {
             userindex = 2;
         }
 
+        // Label unten mitte
+        jLabelCard3.setBounds(568, 256, 136, 137);
+        cp.add(jLabelCard3);
+        cardPlaces[(userindex) % 3] = jLabelCard3;
+
         // Label oben links
         jLabelCard1.setBounds(384, 64, 136, 137);
         cp.add(jLabelCard1);
-        cardPlaces[(userindex) % 3] = jLabelCard1;
+        cardPlaces[(1 + userindex) % 3] = jLabelCard1;
 
         // Label oben rechts
         jLabelCard2.setBounds(744, 64, 136, 137);
         cp.add(jLabelCard2);
-        cardPlaces[(1 + userindex) % 3] = jLabelCard2;
-
-        // Label unten mitte
-        jLabelCard3.setBounds(568, 256, 136, 137);
-        cp.add(jLabelCard3);
-        cardPlaces[(2 + userindex) % 3] = jLabelCard3;
+        cardPlaces[(2 + userindex) % 3] = jLabelCard2;
 
         jLabel1.setBounds(400, 16, 80, 24);
         jLabel1.setFont(new Font("Dialog", Font.BOLD, 11));
@@ -254,8 +254,14 @@ public class GameWindow extends JFrame {
 
 
     public void cardPlayed(String content) {
-        if (content.equals("")) return;
-        if (!cardPlaces[2].getText().equals("") && !cardPlaces[1].getText().equals("") && !cardPlaces[0].getText().equals("")){
+        if (content.isEmpty()) return;
+        int currentTurn = client.getPlayerTurn();
+        if (players[currentTurn][0].equals(client.getUsername())){
+            enableAllButton(true);
+        } else {
+            enableAllButton(false);
+        }
+        if (!cardPlaces[2].getText().isEmpty() && !cardPlaces[1].getText().isEmpty() && !cardPlaces[0].getText().isEmpty()){
             for (JLabel label: cardPlaces) {
                 label.setText("");
             }
@@ -271,6 +277,21 @@ public class GameWindow extends JFrame {
         jButton15.setVisible(true);
     }
 
+    
+    private void enableAllButton(boolean bool) {
+        jButton1.setEnabled(bool);
+        jButton2.setEnabled(bool);
+        jButton3.setEnabled(bool);
+        jButton4.setEnabled(bool);
+        jButton5.setEnabled(bool);
+        jButton6.setEnabled(bool);
+        jButton7.setEnabled(bool);
+        jButton8.setEnabled(bool);
+        jButton9.setEnabled(bool);
+        jButton10.setEnabled(bool);
+        jButton11.setEnabled(bool);
+        jButton12.setEnabled(bool);
+    }
 
     public void enableSkatButton() {
         jButton11.setEnabled(true);
