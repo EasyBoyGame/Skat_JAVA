@@ -3,7 +3,6 @@ package org.example.client_server_system;
 import org.example.database.DBHelper;
 import org.example.logic.*;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -11,7 +10,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -21,16 +19,15 @@ public class Server implements Runnable {
     //Attribute
     Selector selector;
     ServerSocketChannel serverChannel;
-    DBHelper helper;
+    DBHelper helper = new DBHelper();
     private String timestamp;
     private boolean createTable = false;
     private int port;
     private List<SocketChannel> clients = new ArrayList<>();
     private List<String> usernames = new ArrayList<>();
     private List<String> stich = new ArrayList<>();
-    private int soloPlayer;
-    private int augenSolo;
-    private int augenDuo;
+    private int augenSolo;          // Augen des Solospielers
+    private int augenDuo;           // Augen des Teams
     private Reizen reizen;
     private final int MAX_PLAYERS = 3;
     private int gameturn;
@@ -42,17 +39,21 @@ public class Server implements Runnable {
     private boolean handspiel;
 
 
+
+    // TODO 1. SOLO PLAYER FIXEN
+
     // TODO 2. SPIEL MUSS BEENDET WERDEN, SOBALD ALLE KARTEN GESPIELT WURDEN
 
     // TODO 3. SKAT WEGDRÜCKEN
 
-    // TODO 5. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
+    // TODO 4. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
 
-    // TODO 6. GESAMTEN CODE KOMMENTIEREN
+    // TODO 5. GESAMTEN CODE KOMMENTIEREN
 
-    // TODO 7. USERNAME IN GUI ANZEIGEN
+    // TODO 6. USERNAME IN GUI ANZEIGEN
 
-    // TODO 8. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
+    // TODO 7. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
+
 
 
     // TODO EXTRA: NULL HAND PUNKT AUSZÄHLEN NICHT IMPLEMENTIERT
@@ -185,7 +186,7 @@ public class Server implements Runnable {
                 }
                 createTable = true;
                 handspiel = false;
-                gameturn = 1;
+                playedCards = 1;
                 spreadCards();
                 startPlayer = (startPlayer + 1 > 2) ? 0 : +1;
                 reizPlayer = (startPlayer + 2) % 3;
@@ -199,36 +200,38 @@ public class Server implements Runnable {
                 reizenAntwort(content);
                 break;
             case CARD_PLAYED:
+                stich.add(content);
+                int stichWin = (playerTurn + 1) % 3;
+                playerTurn = (playerTurn + 1) % 3;
                 if (stich.size() > 2) {
-                    int stichWin = vergleichStich(stich);
+                    stichWin = vergleichStich(stich);
                     if (stichWin == soloPlayer) {
+                        augenSolo = augenZaehlen(augenSolo);
+                    } else {
                         if(trumpf == Farbe.NULL){
                             setPoints(false);
                         }
-                        augenSolo = augenZaehlen(augenSolo);
-                    } else {
                         augenDuo = augenZaehlen(augenDuo);
                     }
                 }
-                stich.add(content);
-                if (gameturn < 31) {
+                System.out.println("Augensolo: " + augenSolo);
+                System.out.println("Augenduo: " + augenDuo);
+                if (playedCards < 31) {
                     //sendServerMessage(clients.get((startPlayer + gameturn) % 3), MessageType.CARD_PLAYED, content);
                     gameturn++;
                     sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + gameturn % 3);
                     System.out.println("Server-content: " + content);
                 }
-                if (gameturn == 31) {
+                if (playedCards == 31) {
                     setPoints(true);
-                    // AUGEN ZÄHLEN
                     // ENTSCHEIDEN WER GEWINNT UND IN DB DIE PUNKTE FÜRS JEWEILIGE angesagte SPIEL EINTRAGEN
-                    // GEWINNER BEKANNTGEBEN
-                    // KARTEN NEU MISCHEN UND AUSTEILEN
+                    // TODO KARTEN NEU MISCHEN UND AUSTEILEN
                 }
                 break;
             case TRUMPF:
                 this.trumpf = Farbe.valueOf(content);
                 sendServerBroadcast(MessageType.TRUMPF, content);
-                sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + gameturn) % 3);
+                sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + 1) % 3);
                 break;
             case BUBEN:
                 buben = content;
@@ -337,11 +340,22 @@ public class Server implements Runnable {
 
     // Entscheidet wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
-        String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "BUBE", "ASS"};
+        // Normale Reihenfolge für Trumpfspiele
+        String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "ASS", "BUBE"};
         Map<String, Integer> wertung = new HashMap<>();
         for (int i = 0; i < reihenfolge.length; i++) {
             wertung.put(reihenfolge[i], i);
         }
+
+        // Nullspiel-Reihenfolge: Sieben < Acht < Neun < Zehn < Bube < Dame < König < Ass
+        String[] nullReihenfolge = {"SIEBEN", "ACHT", "NEUN", "ZEHN", "BUBE", "DAME", "KOENIG", "ASS"};
+        Map<String, Integer> nullWertung = new HashMap<>();
+        for (int i = 0; i < nullReihenfolge.length; i++) {
+            nullWertung.put(nullReihenfolge[i], i);
+        }
+
+        // Buben haben eine eigene Rangfolge, unabhängig von Trumpf
+        Map<String, Integer> bubenWertung = Map.of("KREUZ", 4, "PIK", 3, "HERZ", 2, "KARO", 1);
 
         String angespielteFarbe = karten.get(0).split(" ")[0];
         int gewinnerIndex = 0;
@@ -356,19 +370,36 @@ public class Server implements Runnable {
             String besteFarbe = beste[0];
             String besteWert = beste[1];
 
+            boolean aktuelleIstBube = wert.equals("BUBE");
+            boolean besteIstBube = besteWert.equals("BUBE");
+
+            boolean aktuelleIstTrumpf = farbe.equals(trumpf.name()) || aktuelleIstBube;
+            boolean besteIstTrumpf = besteFarbe.equals(trumpf.name()) || besteIstBube;
+
             if (trumpf.name().equals("NULL")) {
-                // Im Nullspiel gewinnt die niedrigste Karte in der angespielten Farbe
-                if (farbe.equals(angespielteFarbe) && wertung.get(wert) < wertung.get(besteWert)) {
+                // Nullspiel: niedrigere Karte gewinnt
+                if (farbe.equals(angespielteFarbe) && nullWertung.get(wert) < nullWertung.get(besteWert)) {
                     gewinnerIndex = i;
                     besteKarte = karten.get(i);
                 }
             } else {
-                // Normales Spiel mit Trumpf
-                boolean aktuelleIstTrumpf = farbe.equals(trumpf.name());
-                boolean besteIstTrumpf = besteFarbe.equals(trumpf.name());
-
-                if ((aktuelleIstTrumpf && !besteIstTrumpf) ||
+                // Trumpfregelung mit Buben beachten
+                if (aktuelleIstBube && besteIstBube) {
+                    // Beide Karten sind Buben → Buben-Rangfolge entscheidet
+                    if (bubenWertung.get(farbe) > bubenWertung.get(besteFarbe)) {
+                        gewinnerIndex = i;
+                        besteKarte = karten.get(i);
+                    }
+                } else if (aktuelleIstBube && !besteIstBube) {
+                    // Nur die aktuelle Karte ist ein Bube → gewinnt automatisch
+                    gewinnerIndex = i;
+                    besteKarte = karten.get(i);
+                } else if (!aktuelleIstBube && besteIstBube) {
+                    // Die bisher beste Karte ist ein Bube → bleibt Sieger
+                    continue;
+                } else if ((aktuelleIstTrumpf && !besteIstTrumpf) ||
                         (aktuelleIstTrumpf == besteIstTrumpf && farbe.equals(besteFarbe) && wertung.get(wert) > wertung.get(besteWert))) {
+                    // Normale Trumpf-/Farbregelung
                     gewinnerIndex = i;
                     besteKarte = karten.get(i);
                 }
@@ -376,6 +407,8 @@ public class Server implements Runnable {
         }
         return gewinnerIndex;
     }
+
+
 
 
     // Berechnet den Spielwert des Solo-Spielers
@@ -423,7 +456,7 @@ public class Server implements Runnable {
     }
 
 
-    // Entscheidet wer gewonnen hat und verteilt die Punkte in DB
+    // Entscheidet wer gewonnen hat und verteilt die Punkte in der DB
     private void setPoints(boolean nullSieg) {
         int spielwert = spielWert();
         boolean win;
@@ -491,8 +524,7 @@ public class Server implements Runnable {
         if (win) message.append("WIN");
         else message.append("LOSE");
         message.append(";").append(soloPlayer).append(";").append(augenSolo).append(";").append(spielwert);
-        sendServerBroadcast(MessageType.OPEN_GAME, "");
+        spreadCards();
         sendServerBroadcast(MessageType.END_GAME, String.valueOf(message));
     }
 }
-

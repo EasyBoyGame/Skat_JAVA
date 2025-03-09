@@ -8,6 +8,9 @@ import java.sql.*;
  */
 public class DBHelper {
     private final String dbURL = "jdbc:sqlite:src/main/java/org/example/database/results.db";
+    private String username1;
+    private String username2;
+    private String username3;
 
     // check if database is available
     public void connect(){
@@ -39,11 +42,14 @@ public class DBHelper {
 
     // creates the table when hosted game gets started, to count points
     public void createTable(String tablename, String username1, String username2, String username3){
+        this.username1 = username1;
+        this.username2 = username3;
+        this.username3 = username3;
         String sql = "CREATE TABLE \"" + tablename + "\" (" +
-                "ID INT PRIMARY KEY NOT NULL, " +
-                "\"" + username1 + "\" INT NOT NULL DEFAULT 0, " + // "\" wird genutzt, um den Einschub des Strings als Teil des sql-String zu machen
-                "\"" + username2 + "\" INT NOT NULL DEFAULT 0, " +
-                "\"" + username3 + "\" INT NOT NULL DEFAULT 0)";
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "\"" + username1 + "\" INTEGER NOT NULL DEFAULT 0, " + // "\" wird genutzt, um den Einschub des Strings als Teil des sql-String zu machen
+                "\"" + username2 + "\" INTEGER NOT NULL DEFAULT 0, " +
+                "\"" + username3 + "\" INTEGER NOT NULL DEFAULT 0)";
 
         try (Connection con = DriverManager.getConnection(dbURL);
         PreparedStatement ps = con.prepareStatement(sql)){
@@ -58,7 +64,7 @@ public class DBHelper {
     // inserts/adds the results of every round
     public void setRoundResults(String tablename, int result1, int result2, int result3){
         // Null als Wert, da so AutoIncrement in SQLite implementiert werden kann
-        String sql = "INSERT INTO \"" + tablename + "\" VALUES (NULL, ?,?,?)";
+        String sql = "INSERT INTO \"" + tablename + "\" ("+ username1 + ", " + username2 + ", " + username3 + ") VALUES (?,?,?)";
 
         try (Connection con = DriverManager.getConnection(dbURL);
         PreparedStatement ps = con.prepareStatement(sql)){

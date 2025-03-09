@@ -7,6 +7,7 @@ import org.example.game_selection.panels.WaitingLobby;
 import org.example.logic.*;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -75,35 +76,41 @@ public class Client {
                         String message = new String(bytes).trim();
                         System.out.println("Server-message: " + message);
 
-                        // teilt Nachricht in Typ und Inhalt auf
-                        String[] parts = message.split(":", 2);
-                        if (parts.length < 2) return; // Nachrichtenformat ungültig
+                        String[] messages = message.split("\n");
 
-                        MessageType messageType = MessageType.valueOf(parts[0]);
-                        String content = parts[1];
+                        for (String msg: messages){
+                            msg = msg.trim();
 
-                        switch (messageType) {
-                            case UPDATE_LOBBY -> updateWaitingLobby(content);
-                            case OPEN_GAME -> openGame(content);
-                            case CARD_PLAYED -> {
-                                System.out.println("Client-content: " + content);
-                                parts = content.split(":");
-                                gameWindow.setSpielstart(true);
-                                gameWindow.cardPlayed(parts[0]);
-                                playerTurn = Integer.parseInt(parts[1]);
+                            // teilt Nachricht in Typ und Inhalt auf
+                            String[] parts = msg.split(":", 2);
+                            if (parts.length < 2) return; // Nachrichtenformat ungültig
+
+                            MessageType messageType = MessageType.valueOf(parts[0]);
+                            String content = parts[1];
+
+                            switch (messageType) {
+                                case UPDATE_LOBBY -> updateWaitingLobby(content);
+                                case OPEN_GAME -> openGame(content);
+                                case CARD_PLAYED -> {
+                                    System.out.println("Client-content: " + content);
+                                    parts = content.split(":");
+                                    gameWindow.setSpielstart(true);
+                                    gameWindow.cardPlayed(parts[0]);
+                                    playerTurn = Integer.parseInt(parts[1]);
+                                }
+                                case REIZEN -> gameWindow.enableReizen(content, false);
+                                case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
+                                case START_SPIELAUSWAHL -> {
+                                    SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
+                                }
+                                case TRUMPF -> {
+                                    trumpf = Farbe.valueOf(content);
+                                    Mischen mischen = new Mischen();
+                                    gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
+                                    gameWindow.updateButtonText();
+                                }
+                                case END_GAME -> showResult(content);
                             }
-                            case REIZEN -> gameWindow.enableReizen(content, false);
-                            case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
-                            case START_SPIELAUSWAHL -> {
-                                SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
-                            }
-                            case TRUMPF -> {
-                                trumpf = Farbe.valueOf(content);
-                                Mischen mischen = new Mischen();
-                                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
-                                gameWindow.updateButtonText();
-                            }
-                            case END_GAME -> showResult(content);
                         }
                     }
                 }
@@ -124,6 +131,11 @@ public class Client {
 
 
     private void openGame(String message) {
+        if(gameWindow != null){
+            gameWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
+        }
+
         String[] decks = message.split(":");                    // alle Spielkarten
         List<Karte> deck = extractCards(decks[0].split(","));   // Spielkarten als Liste
         List<Karte> skat = extractCards(decks[1].split(","));   // Skat als Liste
