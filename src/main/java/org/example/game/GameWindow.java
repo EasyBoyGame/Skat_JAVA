@@ -262,7 +262,7 @@ public class GameWindow extends JFrame {
                 label.setText("");
             }
         }
-        cardPlaces[client.getPlayerTurn()].setText(content);
+        cardPlaces[(client.getPlayerTurn() +2) % 3].setText(content);
     }
 
 

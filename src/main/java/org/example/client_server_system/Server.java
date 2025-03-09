@@ -32,7 +32,7 @@ public class Server implements Runnable {
     private final int MAX_PLAYERS = 3;
     private int playedCards;        // gespielte Karten (-anzahl)
     private int soloPlayer;         //
-    private int stichWin;         // ausspielender
+    private int stichWin;           // ausspielender
     private int startPlayer = 2;    // Kartengeber
     private int reizPlayer;         // reizende (sagen)
     private int answPlayer;         // reiz antwortende (hören)
@@ -50,10 +50,9 @@ public class Server implements Runnable {
 
     // TODO 5. GESAMTEN CODE KOMMENTIEREN
 
-    // TODO 6. USERNAME IN GUI ANZEIGEN
+    // TODO 6. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
 
-    // TODO 7. SKAT NACH WEGDRÜCKEN ZU AUGEN DAZUADDIEREN
-
+    // TODO 7. IST BEDIENT??!! (BEIM KARTENVERGLEICH)
 
 
     // TODO EXTRA: NULL HAND PUNKT AUSZÄHLEN NICHT IMPLEMENTIERT
@@ -64,6 +63,7 @@ public class Server implements Runnable {
     // TODO EXTRA: SPIEL EINPASSEN
 
     // TODO EXTRA: SPIELER DISCONNECT
+
 
 
     @Override
@@ -351,7 +351,7 @@ public class Server implements Runnable {
         int gewinnerIndex = index;
         Kartenwert kartenwert = new Kartenwert(trumpf);
 
-        // TODO IST BEDIENT??
+
         if(istTrumpf(karten.get(1)) && !istTrumpf(gewinnerKarte) ||
                 (istTrumpf(karten.get(1)) == istTrumpf(gewinnerKarte) &&
                         kartenwert.kartenWertigkeit.get(karten.get(1).split(" ")[1]) > kartenwert.kartenWertigkeit.get(gewinnerKarte.split(" ")[1]))){
