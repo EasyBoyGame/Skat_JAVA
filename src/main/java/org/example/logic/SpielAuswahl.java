@@ -1,4 +1,5 @@
 package org.example.logic;
+
 import org.example.client_server_system.Client;
 import org.example.client_server_system.MessageType;
 import org.example.game.GameWindow;
@@ -10,7 +11,7 @@ import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
-public class SpielAuswahl extends JFrame{
+public class SpielAuswahl extends JFrame {
 
     private JButton jButton1 = new JButton();
     private JButton jButton2 = new JButton();
@@ -26,7 +27,7 @@ public class SpielAuswahl extends JFrame{
     private List<Karte> deck;
     private Farbe spielmodus;
     private Client client;
-
+    public boolean skatDruecken = false;
 
 
     public SpielAuswahl(GameWindow gameWindow, Client client) {
@@ -103,37 +104,25 @@ public class SpielAuswahl extends JFrame{
         jButton6.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton6.setText("Null");
         jButton6.setMargin(new Insets(2, 2, 2, 2));
-        jButton6.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                buttonActionPerformed(evt, Farbe.NULL);
-            }
-        });
+        jButton6.addActionListener(evt -> buttonActionPerformed(evt, Farbe.NULL));
         cp.add(jButton6);
         jButton7.setBounds(16, 136, 152, 41);
         jButton7.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton7.setText("Skat aufnehmen");
         jButton7.setMargin(new Insets(2, 2, 2, 2));
-        jButton7.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jButton7_ActionPerformed(evt);
-            }
-        });
+        jButton7.addActionListener(this::jButton7_ActionPerformed);
         cp.add(jButton7);
         jButton8.setBounds(336, 136, 153, 41);
         jButton8.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton8.setText("Handspiel ansagen");
         jButton8.setMargin(new Insets(2, 2, 2, 2));
-        jButton8.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) { jButton8_ActionPerformed(evt); }
-        });
+        jButton8.addActionListener(this::jButton8_ActionPerformed);
         cp.add(jButton8);
         jButton9.setBounds(336, 136, 153, 41);
         jButton9.setFont(new Font("Dialog", Font.BOLD, 11));
         jButton9.setText("Spiel ansagen");
         jButton9.setMargin(new Insets(2, 2, 2, 2));
-        jButton9.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) { jButton8_ActionPerformed(evt); }
-        });
+        jButton9.addActionListener(this::jButton8_ActionPerformed);
         cp.add(jButton9);
         jButton9.setVisible(false);
         jButton9.setEnabled(false);
@@ -145,7 +134,7 @@ public class SpielAuswahl extends JFrame{
 
 
     // kontrolliert die Buttons
-    public void buttonActionPerformed(ActionEvent evt, Farbe trumpf){
+    public void buttonActionPerformed(ActionEvent evt, Farbe trumpf) {
         JButton button = (JButton) evt.getSource();
         backGroundNull();
         button.setBackground(Color.red);
@@ -157,6 +146,7 @@ public class SpielAuswahl extends JFrame{
 
     // Button Skat aufnehmen
     public void jButton7_ActionPerformed(ActionEvent evt) {
+        gameWindow.skatDruecken = true;
         jButton7.setVisible(false);
         jButton7.setEnabled(false);
         jButton8.setVisible(false);
@@ -205,9 +195,15 @@ public class SpielAuswahl extends JFrame{
 
     // Button Spiel ansagen
     public void jButton9_ActionPerformed(ActionEvent evt) {
-        if (spielmodus == null){
+        if (spielmodus == null) {
             JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
             return;
+        }
+        if (gameWindow.skatDruecken) {
+            if (gameWindow.skatCount != 2) {
+                JOptionPane.showMessageDialog(this, "Bitte legen Sie den Skat ab!");
+                return;
+            }
         }
         client.sendPlayerActions(MessageType.TRUMPF, spielmodus.name());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -217,15 +213,14 @@ public class SpielAuswahl extends JFrame{
 
 
     // holt sich die Buben des Solo-Spielers
-    public String getBuben(){
+    public String getBuben() {
         StringBuilder buben = new StringBuilder();
         for (int i = 0; i < 4; i++) {
-            if(deck.get(i).toString().split(" ")[1].equals("BUBE")){
+            if (deck.get(i).toString().split(" ")[1].equals("BUBE")) {
                 buben.append(deck.get(i).toString()).append(",");
-            }
-            else buben.append(",");
+            } else buben.append(",");
         }
-        if(!buben.isEmpty()) buben.deleteCharAt(buben.length() -1);
+        if (!buben.isEmpty()) buben.deleteCharAt(buben.length() - 1);
 
         return buben.toString();
     }

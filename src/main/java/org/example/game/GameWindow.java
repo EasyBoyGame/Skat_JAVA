@@ -3,12 +3,15 @@ package org.example.game;
 import org.example.client_server_system.Client;
 import org.example.client_server_system.MessageType;
 import org.example.game_selection.panels.WaitingLobby;
+import org.example.logic.Farbe;
 import org.example.logic.Karte;
+import org.example.logic.Kartenart;
 
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameWindow extends JFrame {
@@ -41,6 +44,9 @@ public class GameWindow extends JFrame {
     private String[][] players;
     private boolean spielstart = false;
     private boolean reizAntwort = false;
+    public boolean skatDruecken;
+    public int skatCount = 0;
+
 
 
     public GameWindow(List<Karte> deck, List<Karte> skat, Client client) {
@@ -240,6 +246,14 @@ public class GameWindow extends JFrame {
 
 
     public void buttonActionPerformed(ActionEvent evt) {
+        if(skatDruecken && skatCount < 2){
+            JButton button = (JButton) evt.getSource();
+            skat = new ArrayList<>();
+            skat.add(new Karte(Farbe.valueOf(button.getText().split(" ")[0]), Kartenart.valueOf(button.getText().split(" ")[1])));
+            skatCount++;
+            if(skatCount == 2) client.sendPlayerActions(MessageType.SKAT_SENDEN, skat.get(0).toString() + "," + skat.get(1).toString());
+        }
+
         if (!spielstart) return;
         int currentTurn = client.getPlayerTurn();
         if (players[currentTurn][0].equals(client.getUsername())) {
@@ -292,6 +306,7 @@ public class GameWindow extends JFrame {
         jButton11.setEnabled(bool);
         jButton12.setEnabled(bool);
     }
+
 
     public void enableSkatButton() {
         jButton11.setEnabled(true);

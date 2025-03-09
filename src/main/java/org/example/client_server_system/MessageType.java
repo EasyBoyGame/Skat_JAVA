@@ -12,5 +12,5 @@ public enum MessageType {
     END_GAME,
     BUBEN,
     HANDSPIEL,
-
+    SKAT_SENDEN
 }
