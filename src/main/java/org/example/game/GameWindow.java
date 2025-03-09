@@ -59,7 +59,7 @@ public class GameWindow extends JFrame {
         int x = (d.width - getSize().width) / 2;
         int y = (d.height - getSize().height) / 2;
         setLocation(x, y);
-        setTitle("GameWindow" + Arrays.toString(players[0]));
+        setTitle("GameWindow - " + client.getUsername());
         setResizable(false);
         Container cp = getContentPane();
         cp.setLayout(null);

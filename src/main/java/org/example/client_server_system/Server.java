@@ -42,9 +42,7 @@ public class Server implements Runnable {
 
 
 
-    // TODO 1. SOLO PLAYER FIXEN
-
-    // TODO 2. SPIEL MUSS BEENDET WERDEN, SOBALD ALLE KARTEN GESPIELT WURDEN
+    // TODO 2. REIZEN NEU STARTEN, NACHDEM ALLE KARTEN GESPIELT WURDEN
 
     // TODO 3. SKAT WEGDRÜCKEN
 
@@ -193,7 +191,7 @@ public class Server implements Runnable {
                 startPlayer = (startPlayer + 1) % 3;
                 reizPlayer = (startPlayer + 2) % 3;
                 answPlayer = (startPlayer + 1) % 3;
-                playerTurn = startPlayer;
+                stichWin = (startPlayer + 1) % 3;
                 sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
                 break;
             case REIZEN:
@@ -234,7 +232,7 @@ public class Server implements Runnable {
             case TRUMPF:
                 this.trumpf = Farbe.valueOf(content);
                 sendServerBroadcast(MessageType.TRUMPF, content);
-                sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + 1) % 3);
+                sendServerBroadcast(MessageType.CARD_PLAYED, ":" + (startPlayer + playedCards) % 3);
                 break;
             case BUBEN:
                 buben = content;
@@ -347,7 +345,7 @@ public class Server implements Runnable {
     }
 
 
-    // Entscheidet wer den Stich bekommt
+    // Entscheidet, wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
         // Normale Reihenfolge für Trumpfspiele
         String[] reihenfolge = {"SIEBEN", "ACHT", "NEUN", "DAME", "KOENIG", "ZEHN", "ASS", "BUBE"};
@@ -419,7 +417,6 @@ public class Server implements Runnable {
 
 
 
-
     // Berechnet den Spielwert des Solo-Spielers
     private int spielWert() {
         int count = 1;
@@ -428,18 +425,22 @@ public class Server implements Runnable {
         if(augenSolo == 120) count++;           // Spielstufe +1 bei Schwarz
 
         if (handspiel) count++;                 // Spielstufe +1 bei Handspiel
-        if (buben.get(0).isEmpty()) {
-            for (String karte : buben) {        // Berechnung Spielstufe mit n-Buben spiel n+1
-                if (!karte.isEmpty()) count++;
-                else break;
+        if(buben.isEmpty()) count += 4;
+        else{
+            if (buben.get(0).isEmpty()) {
+                for (String karte : buben) {        // Berechnung Spielstufe mit n-Buben spiel n+1
+                    if (!karte.isEmpty()) count++;
+                    else break;
+                }
+            }
+            else {
+                for(String karte: buben){           // Berechnung Spielstufe ohne n-Buben spiel n+1
+                    if (karte.isEmpty()) count++;
+                    else break;
+                }
             }
         }
-        else {
-            for(String karte: buben){           // Berechnung Spielstufe ohne n-Buben spiel n+1
-                if (karte.isEmpty()) count++;
-                else break;
-            }
-        }
+
 
         // Spielstufe mit Grundwert multiplizieren
         switch (trumpf){

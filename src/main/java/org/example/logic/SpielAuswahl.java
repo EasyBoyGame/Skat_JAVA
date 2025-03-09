@@ -170,7 +170,6 @@ public class SpielAuswahl extends JFrame{
         List<Karte> deck = gameWindow.getDeck();
         deck.addAll(gameWindow.getSkat());
         gameWindow.setDeck(deck);
-        client.sendPlayerActions(MessageType.BUBEN, getBuben());
         //GUI.dec1.addAll(GUI.decskat);
 
         spielmodus = Farbe.KREUZ;
@@ -192,6 +191,7 @@ public class SpielAuswahl extends JFrame{
                 gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.NULL));
                 break;
         }
+        client.sendPlayerActions(MessageType.BUBEN, getBuben());
 
         gameWindow.updateButtonText();
     }

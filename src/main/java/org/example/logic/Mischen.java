@@ -46,7 +46,6 @@ public class Mischen {
         kartenSp2 = kartenSortieren(deck.subList(10 ,20), Farbe.KREUZ);
         kartenSp3 = kartenSortieren(deck.subList(20 ,30), Farbe.KREUZ);
         skat = kartenSortieren(deck.subList(30, 32), Farbe.KREUZ);
-        System.out.println(skat);
         return deck;
     }
 
