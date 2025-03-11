@@ -46,7 +46,7 @@ public class GameWindow extends JFrame {
     private boolean reizAntwort = false;
     public boolean skatDruecken;
     public int skatCount = 0;
-    CardImage cardImage;
+    CardImage cardImage = new CardImage();
 
 
 
@@ -105,73 +105,73 @@ public class GameWindow extends JFrame {
         cardPlaces[(2 + userindex) % 3] = jLabelCard2;
 
         jLabel1.setBounds(400, 16, 80, 24);
-        jLabel1.setFont(new Font("Dialog", Font.BOLD, 11));
+        jLabel1.setFont(new Font("Dialog", Font.PLAIN, 11));
         jLabel1.setText(username1);
         cp.add(jLabel1);
         jLabel2.setBounds(768, 16, 80, 24);
-        jLabel2.setFont(new Font("Dialog", Font.BOLD, 11));
+        jLabel2.setFont(new Font("Dialog", Font.PLAIN, 11));
         jLabel2.setText(username2);
         cp.add(jLabel2);
         //endregion
 
         //region Karten
         jButton1.setBounds(12, 401, 93, 141);
-        jButton1.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton1.setText(deck.get(0).toString());
+        jButton1.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton1.setText("<html><font color='transparent'>" + deck.get(0).toString() + "</font></html>");
         jButton1.setMargin(new Insets(2, 2, 2, 2));
         jButton1.addActionListener(this::buttonActionPerformed);
         cp.add(jButton1);
         jButton2.setBounds(111, 401, 93, 141);
-        jButton2.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton2.setText(deck.get(1).toString());
+        jButton2.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton2.setText("<html><font color='transparent'>" + deck.get(1).toString() + "</font></html>");
         jButton2.setMargin(new Insets(2, 2, 2, 2));
         jButton2.addActionListener(this::buttonActionPerformed);
         cp.add(jButton2);
         jButton3.setBounds(210, 401, 93, 141);
-        jButton3.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton3.setText(deck.get(2).toString());
+        jButton3.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton3.setText("<html><font color='transparent'>" + deck.get(2).toString() + "</font></html>");
         jButton3.setMargin(new Insets(2, 2, 2, 2));
         jButton3.addActionListener(this::buttonActionPerformed);
         cp.add(jButton3);
         jButton4.setBounds(309, 401, 93, 141);
-        jButton4.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton4.setText(deck.get(3).toString());
+        jButton4.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton4.setText("<html><font color='transparent'>" + deck.get(3).toString() + "</font></html>");
         jButton4.setMargin(new Insets(2, 2, 2, 2));
         jButton4.addActionListener(this::buttonActionPerformed);
         cp.add(jButton4);
         jButton5.setBounds(408, 401, 93, 141);
-        jButton5.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton5.setText(deck.get(4).toString());
+        jButton5.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton5.setText("<html><font color='transparent'>" + deck.get(4).toString() + "</font></html>");
         jButton5.setMargin(new Insets(2, 2, 2, 2));
         jButton5.addActionListener(this::buttonActionPerformed);
         cp.add(jButton5);
         jButton6.setBounds(507, 401, 93, 141);
-        jButton6.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton6.setText(deck.get(5).toString());
+        jButton6.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton6.setText("<html><font color='transparent'>" + deck.get(5).toString() + "</font></html>");
         jButton6.setMargin(new Insets(2, 2, 2, 2));
         jButton6.addActionListener(this::buttonActionPerformed);
         cp.add(jButton6);
         jButton7.setBounds(606, 401, 93, 141);
-        jButton7.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton7.setText(deck.get(6).toString());
+        jButton7.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton7.setText("<html><font color='transparent'>" + deck.get(6).toString() + "</font></html>");
         jButton7.setMargin(new Insets(2, 2, 2, 2));
         jButton7.addActionListener(this::buttonActionPerformed);
         cp.add(jButton7);
         jButton8.setBounds(705, 401, 93, 141);
-        jButton8.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton8.setText(deck.get(7).toString());
+        jButton8.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton8.setText("<html><font color='transparent'>" + deck.get(7).toString() + "</font></html>");
         jButton8.setMargin(new Insets(2, 2, 2, 2));
         jButton8.addActionListener(this::buttonActionPerformed);
         cp.add(jButton8);
         jButton9.setBounds(804, 401, 93, 141);
-        jButton9.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton9.setText(deck.get(8).toString());
+        jButton9.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton9.setText("<html><font color='transparent'>" + deck.get(8).toString() + "</font></html>");
         jButton9.setMargin(new Insets(2, 2, 2, 2));
         jButton9.addActionListener(this::buttonActionPerformed);
         cp.add(jButton9);
         jButton10.setBounds(903, 401, 93, 141);
-        jButton10.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton10.setText(deck.get(9).toString());
+        jButton10.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton10.setText("<html><font color='transparent'>" + deck.get(9).toString() + "</font></html>");
         jButton10.setMargin(new Insets(2, 2, 2, 2));
         jButton10.addActionListener(this::buttonActionPerformed);
         cp.add(jButton10);
@@ -179,8 +179,8 @@ public class GameWindow extends JFrame {
 
         //region Buttons Skat
         jButton11.setBounds(1002, 401, 93, 141);
-        jButton11.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton11.setText(skat.get(0).toString());
+        jButton11.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton11.setText("<html><font color='transparent'>" + skat.get(0).toString() + "</font></html>");
         jButton11.setMargin(new Insets(2, 2, 2, 2));
         jButton11.addActionListener(this::buttonActionPerformed);
         jButton11.setVisible(false);
@@ -188,8 +188,8 @@ public class GameWindow extends JFrame {
         cp.add(jButton11);
 
         jButton12.setBounds(1101, 401, 93, 141);
-        jButton12.setFont(new Font("Dialog", Font.BOLD, 11));
-        jButton12.setText(skat.get(1).toString());
+        jButton12.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton12.setText("<html><font color='transparent'>" + skat.get(1).toString() + "</font></html>");
         jButton12.setMargin(new Insets(2, 2, 2, 2));
         jButton12.addActionListener(this::buttonActionPerformed);
         jButton12.setEnabled(false);
@@ -229,19 +229,19 @@ public class GameWindow extends JFrame {
 
     // Buttonname → wird zu jeweiliger Karte umbenannt
     public void updateButtonText() {
-        jButton1.setText(deck.get(0).toString());
-        jButton2.setText(deck.get(1).toString());
-        jButton3.setText(deck.get(2).toString());
-        jButton4.setText(deck.get(3).toString());
-        jButton5.setText(deck.get(4).toString());
-        jButton6.setText(deck.get(5).toString());
-        jButton7.setText(deck.get(6).toString());
-        jButton8.setText(deck.get(7).toString());
-        jButton9.setText(deck.get(8).toString());
-        jButton10.setText(deck.get(9).toString());
+        jButton1.setText("<html><font color='transparent'>" + deck.get(0).toString() + "</font></html>");
+        jButton2.setText("<html><font color='transparent'>" + deck.get(1).toString() + "</font></html>");
+        jButton3.setText("<html><font color='transparent'>" + deck.get(2).toString() + "</font></html>");
+        jButton4.setText("<html><font color='transparent'>" + deck.get(3).toString() + "</font></html>");
+        jButton5.setText("<html><font color='transparent'>" + deck.get(4).toString() + "</font></html>");
+        jButton6.setText("<html><font color='transparent'>" + deck.get(5).toString() + "</font></html>");
+        jButton7.setText("<html><font color='transparent'>" + deck.get(6).toString() + "</font></html>");
+        jButton8.setText("<html><font color='transparent'>" + deck.get(7).toString() + "</font></html>");
+        jButton9.setText("<html><font color='transparent'>" + deck.get(8).toString() + "</font></html>");
+        jButton10.setText("<html><font color='transparent'>" + deck.get(9).toString() + "</font></html>");
         if (jButton11.isVisible()) {
-            jButton11.setText(deck.get(10).toString());
-            jButton12.setText(deck.get(11).toString());
+            jButton11.setText("<html><font color='transparent'>" + deck.get(10).toString() + "</font></html>");
+            jButton12.setText("<html><font color='transparent'>" + deck.get(11).toString() + "</font></html>");
         }
         
         jButton1.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(0).toString()) , 80, 120));
