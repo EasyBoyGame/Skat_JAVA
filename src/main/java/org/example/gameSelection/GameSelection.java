@@ -19,13 +19,13 @@ public class GameSelection extends JFrame {
     }
 
     private void initWindow() {
+        initJFrame();
         //Registrierung der einzelnen User Interfaces
         panels.put(PanelType.MAIN_MENU, new MainPanel(this));
         panels.put(PanelType.JOIN_GAME, new JoinPanel(this));
         panels.put(PanelType.HOST_GAME, new HostPanel(this));
         panels.put(PanelType.WAITING_LOBBY, WaitingLobby.createInstance(this));
         changePanel(PanelType.MAIN_MENU);
-        initJFrame();
     }
 
     public void initJFrame() {

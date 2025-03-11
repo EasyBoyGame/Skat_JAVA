@@ -23,7 +23,6 @@ public class HostPanel extends JPanel {
 
         initWindow();
 
-
         setVisible(true);
         revalidate();
         repaint();

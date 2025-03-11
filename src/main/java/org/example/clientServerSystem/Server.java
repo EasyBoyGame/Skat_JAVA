@@ -23,10 +23,10 @@ public class Server implements Runnable {
     private String timestamp;
     private boolean createTable = false;
     private int port;
-    private List<SocketChannel> clients = new ArrayList<>();
-    private List<String> usernames = new ArrayList<>();
-    private List<String> stich = new ArrayList<>();
-    String skat;
+    private final List<SocketChannel> clients = new ArrayList<>();
+    private final List<String> usernames = new ArrayList<>();
+    private final List<String> stich = new ArrayList<>();
+    private String skat;
     private int augenSolo;          // Augen des Solospielers
     private int augenDuo;           // Augen des Teams
     private Reizen reizen;
@@ -40,8 +40,6 @@ public class Server implements Runnable {
     private Farbe trumpf;           // das angesagte Spiel
     private String buben;           // Buben des Alleinspielers für die Punkteauswertung
     private boolean handspiel;      // gibt an, ob Handspiel angesagt wurde
-
-
 
     // TODO 2. GESAMTEN CODE KOMMENTIEREN
 
@@ -62,13 +60,11 @@ public class Server implements Runnable {
         startServerLoop();
     }
 
-
     // Konstruktor
     public Server(int port) {
         reizen = new Reizen();
         this.port = port;
     }
-
 
     private void initServer() {
         try {
@@ -115,7 +111,6 @@ public class Server implements Runnable {
 
     private void acceptPlayer(Selector selector, ServerSocketChannel serverChannel) throws IOException {
         if (clients.size() >= MAX_PLAYERS) return; // nicht mehr als 3 Spieler
-
         // erstellt und registriert neuen Client
         SocketChannel client = serverChannel.accept();
         client.configureBlocking(false);
@@ -149,12 +144,12 @@ public class Server implements Runnable {
 
         String[] messages = message.split("\n");
         for (String msg : messages) {
-            processMessage(client, msg.trim());
+            processMessage(msg.trim());
         }
     }
 
 
-    private void processMessage(SocketChannel client, String trim) {
+    private void processMessage(String trim) {
         // teilt Nachricht in Typ und Inhalt auf
         String[] parts = trim.split(":", 2);
         if (parts.length < 2) return; // Nachrichtenformat ungültig
@@ -165,7 +160,7 @@ public class Server implements Runnable {
         // Verarbeitet unterschiedliche Typen von Nachrichten
         switch (messageType) {
             case CONNECTION:
-                setMetaData(client, trim);
+                setMetaData(trim);
                 sendServerBroadcast(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
             case OPEN_GAME:
@@ -259,7 +254,6 @@ public class Server implements Runnable {
         }
     }
 
-
     private void reizen(String content) {
         if (content.equals("false")) {
             if (reizPlayer == startPlayer) {
@@ -273,7 +267,6 @@ public class Server implements Runnable {
             sendServerMessage(clients.get(answPlayer), MessageType.REIZ_ANTWORT, "" + reizen.getReizwert());
         }
     }
-
 
     private void spreadCards() {
         Mischen mischen = new Mischen();
@@ -311,7 +304,6 @@ public class Server implements Runnable {
         }
     }
 
-
     private void sendServerMessage(SocketChannel client, MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
         try {
@@ -321,12 +313,10 @@ public class Server implements Runnable {
         }
     }
 
-
-    private void setMetaData(SocketChannel socketChannel, String message) {
+    private void setMetaData(String message) {
         String[] parts = message.split(":", 2);
         usernames.add(parts[1]);
     }
-
 
     private String socketListToString() {
         StringBuilder builder = new StringBuilder();
@@ -341,7 +331,6 @@ public class Server implements Runnable {
 
         return builder.toString();
     }
-
 
     // Entscheidet, wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
@@ -361,13 +350,11 @@ public class Server implements Runnable {
         }
 
         if (cardToPoints(gewinnerKarte, bedient) < cardPoints3 || (cardToPoints(gewinnerKarte, bedient) == cardPoints3 && kartenwert.getFarbwert(gewinnerKarte) < kartenwert.getFarbwert(karten.get(2)))){
-            gewinnerKarte = karten.get(2);
             gewinnerIndex = (index + 2) % 3;
         }
 
         return gewinnerIndex;
     }
-
 
     private int cardToPoints(String karte, String bedient) {
         Kartenwert kartenwert = new Kartenwert(trumpf);
@@ -379,14 +366,12 @@ public class Server implements Runnable {
         points += kartenwert.kartenWertigkeit.get(karte.split(" ")[1]);
         return points;
     }
-    
 
     private boolean istTrumpf(String karte) {
         if (trumpf.name().equals("NULL")) return false;
         if (karte.split(" ")[1].equals("BUBE")) return true;
         return Farbe.valueOf(karte.split(" ")[0]) == trumpf;
     }
-
 
     // Berechnet den Spielwert des Solo-Spielers
     private int spielWert() {
@@ -411,7 +396,6 @@ public class Server implements Runnable {
             }
         }
 
-
         // Spielstufe mit Grundwert multiplizieren
         switch (trumpf) {
             case KREUZ -> count *= 12;
@@ -424,19 +408,12 @@ public class Server implements Runnable {
         return count;
     }
 
-
     // zählt die Augen
     private int augenZaehlen(int augenWert) {
         Kartenwert kartenwert = new Kartenwert(trumpf);
-        if (handspiel && playedCards == 31) {
-            String skat1 = skat.split(",")[0].split(" ")[1];
-            String skat2 = skat.split(",")[1].split(" ")[1];
-            augenSolo += kartenwert.getPunkte(Kartenart.valueOf(skat1)) + kartenwert.getPunkte(Kartenart.valueOf(skat2));
-        } else if (!handspiel && playedCards == 3) {
-            String skat1 = skat.split(",")[0].split(" ")[1];
-            String skat2 = skat.split(",")[1].split(" ")[1];
-            augenSolo += kartenwert.getPunkte(Kartenart.valueOf(skat1)) + kartenwert.getPunkte(Kartenart.valueOf(skat2));
-        }
+        String skat1 = skat.split(",")[0].split(" ")[1];
+        String skat2 = skat.split(",")[1].split(" ")[1];
+        augenSolo += kartenwert.getPunkte(Kartenart.valueOf(skat1)) + kartenwert.getPunkte(Kartenart.valueOf(skat2));
         for (String karte : stich) {
             augenWert += kartenwert.getPunkte(Kartenart.valueOf(karte.split(" ")[1]));
         }
@@ -444,13 +421,13 @@ public class Server implements Runnable {
         return augenWert;
     }
 
-
     // Entscheidet, wer gewonnen hat und verteilt die Punkte in der DB
     private void setPoints(boolean nullSieg) {
         int spielwert = spielWert();
-        boolean win;
+        boolean win = false;
+        //TODO Tahir mach setRoundResult besser, bitti :)
         if (trumpf != Farbe.NULL) {
-            if (augenSolo > augenDuo) {
+            if (augenSolo > augenDuo || nullSieg) {
                 win = true;
                 switch (soloPlayer) {
                     case 0:
@@ -464,35 +441,6 @@ public class Server implements Runnable {
                         break;
                 }
             } else {
-                win = false;
-                switch (soloPlayer) {
-                    case 0:
-                        helper.setRoundResults(timestamp, spielwert * -2, 0, 0);
-                        break;
-                    case 1:
-                        helper.setRoundResults(timestamp, 0, spielwert * -2, 0);
-                        break;
-                    case 2:
-                        helper.setRoundResults(timestamp, 0, 0, spielwert * -2);
-                        break;
-                }
-            }
-        } else {
-            if (nullSieg) {
-                win = true;
-                switch (soloPlayer) {
-                    case 0:
-                        helper.setRoundResults(timestamp, spielwert, 0, 0);
-                        break;
-                    case 1:
-                        helper.setRoundResults(timestamp, 0, spielwert, 0);
-                        break;
-                    case 2:
-                        helper.setRoundResults(timestamp, 0, 0, spielwert);
-                        break;
-                }
-            } else {
-                win = false;
                 switch (soloPlayer) {
                     case 0:
                         helper.setRoundResults(timestamp, spielwert * -2, 0, 0);

@@ -26,7 +26,7 @@ public class MainPanel extends JPanel {
         repaint();
     }
 
-    public void debugButton(){
+    public void debugButton() {
         int buttonWidth = parentWindow.getWidth() * 8 / 10;
         int buttonHeight = parentWindow.getHeight() * 2 / 10;
 
@@ -42,12 +42,12 @@ public class MainPanel extends JPanel {
             Server server = new Server(port);
             new Thread(server).start();
             try {
-                Thread.sleep(500);
-                Client client = new Client(username1, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(500);
-                Client client2 = new Client(username2, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(500);
-                Client client3 = new Client(username3, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+                Thread.sleep(300);
+                new Client(username1, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+                Thread.sleep(300);
+                new Client(username2, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+                Thread.sleep(300);
+                new Client(username3, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
             } catch (InterruptedException | UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }

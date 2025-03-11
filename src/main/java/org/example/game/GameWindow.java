@@ -1,8 +1,8 @@
 package org.example.game;
 
-import org.example.client_server_system.Client;
-import org.example.client_server_system.MessageType;
-import org.example.game_selection.panels.WaitingLobby;
+import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.MessageType;
+import org.example.gameSelection.panels.WaitingLobby;
 import org.example.logic.Farbe;
 import org.example.logic.Karte;
 import org.example.logic.Kartenart;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameWindow extends JFrame {
-
     private ArrayList<JButton> jButtons = new ArrayList<>();
     private final JButton jButton11 = new JButton();  // Skat Karte 1
     private final JButton jButton12 = new JButton();  // Skat Karte 2
@@ -46,8 +45,8 @@ public class GameWindow extends JFrame {
         this.skat = skat;
         players = WaitingLobby.getInstance().players;
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        int frameWidth = 1286;
-        int frameHeight = 592;
+        int frameWidth = 1300;
+        int frameHeight = 600;
         setSize(frameWidth, frameHeight);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (d.width - getSize().width) / 2;
@@ -57,7 +56,6 @@ public class GameWindow extends JFrame {
         setResizable(false);
         Container cp = getContentPane();
         cp.setLayout(null);
-
 
         //region jLabel
         String myName = client.getUsername();
@@ -171,7 +169,6 @@ public class GameWindow extends JFrame {
         jButtons.add(jButton);
     }
 
-
     // Buttonname → wird zu jeweiliger Karte umbenannt
     public void updateButtonText() {
         // sets the name of the card (button) for further usage -> communication with server
@@ -192,7 +189,6 @@ public class GameWindow extends JFrame {
                     80, 120));
         }
     }
-
 
     public void buttonActionPerformed(ActionEvent evt) {
         if(skatDruecken && skatCount < 2){
@@ -215,7 +211,6 @@ public class GameWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Spieler " + players[currentTurn][0] + " ist am Zug!\nBitte warten");
         }
     }
-
 
     public void cardPlayed(String content) {
         if (content.isEmpty()) return;

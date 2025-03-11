@@ -6,25 +6,21 @@ import org.example.gameSelection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 
 public class WaitingLobby extends JPanel {
     private static WaitingLobby INSTANCE;
     private GameSelection parentWindow;
     public String[][] players = new String[3][2];
-    private String username;
-    private InetAddress ip;
     private int port;
     public int connectedPlayers;
     private Client client;
-
 
     private WaitingLobby(GameSelection parentWindow){
         this.parentWindow = parentWindow;
         parentWindow.setResizable(false);
 
-
-        
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
 
@@ -43,8 +39,9 @@ public class WaitingLobby extends JPanel {
         initButtons();
         initLabels();
     }
+
     public static WaitingLobby createInstance(GameSelection parentWindow){
-        if (INSTANCE == null){
+        if (INSTANCE == null) {
             return INSTANCE = new WaitingLobby(parentWindow);
         }
         return INSTANCE;
@@ -55,6 +52,7 @@ public class WaitingLobby extends JPanel {
     }
 
     public void addPlayer(String username, String ip){
+        if (connectedPlayers >= 2) return;
         players[connectedPlayers][0] = username;
         players[connectedPlayers][1] = ip;
         connectedPlayers++;
@@ -68,7 +66,11 @@ public class WaitingLobby extends JPanel {
         JButton startGame = new JButton("Start");
         startGame.setEnabled(true);
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
-        startGame.addActionListener(e -> client.sendPlayerActions(MessageType.OPEN_GAME, ""));
+        startGame.addActionListener(e -> {
+            client.sendPlayerActions(MessageType.OPEN_GAME, "");
+            parentWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            parentWindow.dispatchEvent(new WindowEvent(parentWindow, WindowEvent.WINDOW_CLOSING));
+        });
         add(startGame);
     }
 
