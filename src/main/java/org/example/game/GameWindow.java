@@ -300,11 +300,11 @@ public class GameWindow extends JFrame {
 
     public void cardPlayed(String content) {
         if (content.isEmpty()) return;
-        if (!cardPlaces[2].getText().isEmpty() && !cardPlaces[1].getText().isEmpty() && !cardPlaces[0].getText().isEmpty()){
+        if (cardPlaces[2].getIcon() != null && cardPlaces[1].getIcon() != null && cardPlaces[0].getIcon() != null){
             for (JLabel label: cardPlaces) {
                 label.setText("");
                 // TODO delete all icons once every three cards
-                //label.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(("DEFAULT")), 80, 120));
+                label.setIcon(null);
             }
             this.revalidate();
             this.repaint();

@@ -18,10 +18,7 @@ public class Main {
     public static void main(String[] args) {
         GameSelection gameSelection = new GameSelection();
 
-
-
         DBHelper helper = new DBHelper();
         helper.connect();
-
     }
 }

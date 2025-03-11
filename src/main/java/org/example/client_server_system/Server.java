@@ -42,7 +42,6 @@ public class Server implements Runnable {
     private boolean handspiel;      // gibt an, ob Handspiel angesagt wurde
 
 
-    // TODO 1. KARTEN BILDER VON ARNE UND JULIAN EINFÜGEN
 
     // TODO 2. GESAMTEN CODE KOMMENTIEREN
 
