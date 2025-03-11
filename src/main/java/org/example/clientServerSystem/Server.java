@@ -1,4 +1,4 @@
-package org.example.client_server_system;
+package org.example.clientServerSystem;
 
 import org.example.database.DBHelper;
 import org.example.logic.*;

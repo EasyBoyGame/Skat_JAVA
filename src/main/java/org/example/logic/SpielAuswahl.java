@@ -1,7 +1,7 @@
 package org.example.logic;
 
-import org.example.client_server_system.Client;
-import org.example.client_server_system.MessageType;
+import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.MessageType;
 import org.example.game.GameWindow;
 
 import java.awt.event.ActionEvent;

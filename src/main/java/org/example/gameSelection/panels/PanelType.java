@@ -1,4 +1,4 @@
-package org.example.game_selection.panels;
+package org.example.gameSelection.panels;
 
 public enum PanelType {
     MAIN_MENU,

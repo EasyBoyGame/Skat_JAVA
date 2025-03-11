@@ -1,8 +1,8 @@
-package org.example.game_selection.panels;
+package org.example.gameSelection.panels;
 
-import org.example.client_server_system.Client;
-import org.example.client_server_system.MessageType;
-import org.example.game_selection.GameSelection;
+import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.MessageType;
+import org.example.gameSelection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,18 +68,15 @@ public class WaitingLobby extends JPanel {
         JButton startGame = new JButton("Start");
         startGame.setEnabled(true);
         startGame.setBounds(parentWindow.getWidth() - 150, parentWindow.getHeight() - 120, 100, 50);
-        startGame.addActionListener(e -> {
-            client.sendPlayerActions(MessageType.OPEN_GAME, "");
-        });
+        startGame.addActionListener(e -> client.sendPlayerActions(MessageType.OPEN_GAME, ""));
         add(startGame);
     }
 
-    private void initLabels(){
+    private void initLabels() {
         JLabel gamePort = new JLabel();
         gamePort.setBounds(parentWindow.getWidth() - 120, 20, 100, 50);
         gamePort.setText("Port: " + port);
         add(gamePort);
-
 
         //region columnnames
         Font columnName = new Font("ARIAL", Font.PLAIN, 16);

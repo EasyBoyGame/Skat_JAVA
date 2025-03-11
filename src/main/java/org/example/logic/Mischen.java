@@ -10,12 +10,9 @@ public class Mischen {
     public List<Karte> kartenSp3;
     public List<Karte> skat;
 
-
-
     public Mischen() {
         deck = kartenErstellen();
     }
-
 
     public List<Karte> getKarten(int spieler){
         switch (spieler){

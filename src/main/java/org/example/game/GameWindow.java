@@ -16,16 +16,7 @@ import java.util.List;
 
 public class GameWindow extends JFrame {
 
-    private final JButton jButton1 = new JButton();   // Deck Karte 1
-    private final JButton jButton2 = new JButton();   // Deck Karte 2
-    private final JButton jButton3 = new JButton();   // Deck Karte 3
-    private final JButton jButton4 = new JButton();   // Deck Karte 4
-    private final JButton jButton5 = new JButton();   // Deck Karte 5
-    private final JButton jButton6 = new JButton();   // Deck Karte 6
-    private final JButton jButton7 = new JButton();   // Deck Karte 7
-    private final JButton jButton8 = new JButton();   // Deck Karte 8
-    private final JButton jButton9 = new JButton();   // Deck Karte 9
-    private final JButton jButton10 = new JButton();  // Deck Karte 10
+    private ArrayList<JButton> jButtons = new ArrayList<>();
     private final JButton jButton11 = new JButton();  // Skat Karte 1
     private final JButton jButton12 = new JButton();  // Skat Karte 2
     private final JButton jButton14 = new JButton();  // reizen ja
@@ -47,8 +38,6 @@ public class GameWindow extends JFrame {
     public boolean skatDruecken;
     public int skatCount = 0;
     CardImage cardImage = new CardImage();
-
-
 
     public GameWindow(List<Karte> deck, List<Karte> skat, Client client) {
         super();
@@ -114,77 +103,9 @@ public class GameWindow extends JFrame {
         cp.add(jLabel2);
         //endregion
 
-        //region Karten
-        jButton1.setForeground(new Color(0, 0, 0, 0));
-        jButton1.setBounds(12, 401, 93, 141);
-        jButton1.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton1.setText(deck.get(0).toString());
-        jButton1.setMargin(new Insets(2, 2, 2, 2));
-        jButton1.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton1);
-        jButton2.setForeground(new Color(0, 0, 0, 0));
-        jButton2.setBounds(111, 401, 93, 141);
-        jButton2.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton2.setText(deck.get(1).toString());
-        jButton2.setMargin(new Insets(2, 2, 2, 2));
-        jButton2.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton2);
-        jButton3.setForeground(new Color(0, 0, 0, 0));
-        jButton3.setBounds(210, 401, 93, 141);
-        jButton3.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton3.setText(deck.get(2).toString());
-        jButton3.setMargin(new Insets(2, 2, 2, 2));
-        jButton3.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton3);
-        jButton4.setForeground(new Color(0, 0, 0, 0));
-        jButton4.setBounds(309, 401, 93, 141);
-        jButton4.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton4.setText(deck.get(3).toString());
-        jButton4.setMargin(new Insets(2, 2, 2, 2));
-        jButton4.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton4);
-        jButton5.setForeground(new Color(0, 0, 0, 0));
-        jButton5.setBounds(408, 401, 93, 141);
-        jButton5.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton5.setText(deck.get(4).toString());
-        jButton5.setMargin(new Insets(2, 2, 2, 2));
-        jButton5.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton5);
-        jButton6.setForeground(new Color(0, 0, 0, 0));
-        jButton6.setBounds(507, 401, 93, 141);
-        jButton6.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton6.setText(deck.get(5).toString());
-        jButton6.setMargin(new Insets(2, 2, 2, 2));
-        jButton6.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton6);
-        jButton7.setForeground(new Color(0, 0, 0, 0));
-        jButton7.setBounds(606, 401, 93, 141);
-        jButton7.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton7.setText(deck.get(6).toString());
-        jButton7.setMargin(new Insets(2, 2, 2, 2));
-        jButton7.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton7);
-        jButton8.setForeground(new Color(0, 0, 0, 0));
-        jButton8.setBounds(705, 401, 93, 141);
-        jButton8.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton8.setText(deck.get(7).toString());
-        jButton8.setMargin(new Insets(2, 2, 2, 2));
-        jButton8.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton8);
-        jButton9.setForeground(new Color(0, 0, 0, 0));
-        jButton9.setBounds(804, 401, 93, 141);
-        jButton9.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton9.setText(deck.get(8).toString());
-        jButton9.setMargin(new Insets(2, 2, 2, 2));
-        jButton9.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton9);
-        jButton10.setForeground(new Color(0, 0, 0, 0));
-        jButton10.setBounds(903, 401, 93, 141);
-        jButton10.setFont(new Font("Dialog", Font.PLAIN, -10));
-        jButton10.setText(deck.get(9).toString());
-        jButton10.setMargin(new Insets(2, 2, 2, 2));
-        jButton10.addActionListener(this::buttonActionPerformed);
-        cp.add(jButton10);
+        for (int i = 0; i < 10; i++) {
+            setupButton(cp , i);
+        }
         //endregion
 
         //region Buttons Skat
@@ -238,39 +159,37 @@ public class GameWindow extends JFrame {
         setVisible(true);
     }
 
+    public void setupButton(Container cp, int count) {
+        JButton jButton = new JButton();
+        jButton.setForeground(new Color(0, 0, 0, 0));
+        jButton.setBounds(10 + count*100, 401, 93, 141);
+        jButton.setFont(new Font("Dialog", Font.PLAIN, -10));
+        jButton.setText(deck.get(count).toString());
+        jButton.setMargin(new Insets(2, 2, 2, 2));
+        jButton.addActionListener(this::buttonActionPerformed);
+        cp.add(jButton);
+        jButtons.add(jButton);
+    }
+
 
     // Buttonname → wird zu jeweiliger Karte umbenannt
     public void updateButtonText() {
         // sets the name of the card (button) for further usage -> communication with server
-        jButton1.setText(deck.get(0).toString());
-        jButton2.setText(deck.get(1).toString());
-        jButton3.setText(deck.get(2).toString());
-        jButton4.setText(deck.get(3).toString());
-        jButton5.setText(deck.get(4).toString());
-        jButton6.setText(deck.get(5).toString());
-        jButton7.setText(deck.get(6).toString());
-        jButton8.setText(deck.get(7).toString());
-        jButton9.setText(deck.get(8).toString());
-        jButton10.setText(deck.get(9).toString());
+        int i = 0;
+        for (JButton jButton : jButtons) {
+            jButton.setText(deck.get(i).toString());
+            jButton.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(i).toString()),
+                    80, 120));
+            i++;
+        }
+
         if (jButton11.isVisible()) {
             jButton11.setText(deck.get(10).toString());
             jButton12.setText(deck.get(11).toString());
-        }
-
-        // sets the image of the card (button)
-        jButton1.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(0).toString()) , 80, 120));
-        jButton2.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(1).toString()) , 80, 120));
-        jButton3.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(2).toString()) , 80, 120));
-        jButton4.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(3).toString()) , 80, 120));
-        jButton5.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(4).toString()) , 80, 120));
-        jButton6.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(5).toString()) , 80, 120));
-        jButton7.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(6).toString()) , 80, 120));
-        jButton8.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(7).toString()) , 80, 120));
-        jButton9.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(8).toString()) , 80, 120));
-        jButton10.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(9).toString()) , 80, 120));
-        if (jButton11.isVisible()) {
-            jButton11.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(10).toString()) , 80, 120));
-            jButton12.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(11).toString()) , 80, 120));
+            jButton11.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(10).toString()),
+                    80, 120));
+            jButton12.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(11).toString()),
+                    80, 120));
         }
     }
 
@@ -334,16 +253,9 @@ public class GameWindow extends JFrame {
 
 
     private void setButtonEnable(boolean bool) {
-        jButton1.setEnabled(bool);
-        jButton2.setEnabled(bool);
-        jButton3.setEnabled(bool);
-        jButton4.setEnabled(bool);
-        jButton5.setEnabled(bool);
-        jButton6.setEnabled(bool);
-        jButton7.setEnabled(bool);
-        jButton8.setEnabled(bool);
-        jButton9.setEnabled(bool);
-        jButton10.setEnabled(bool);
+        for (JButton jButton : jButtons) {
+            jButton.setEnabled(true);
+        }
         jButton11.setEnabled(bool);
         jButton12.setEnabled(bool);
     }

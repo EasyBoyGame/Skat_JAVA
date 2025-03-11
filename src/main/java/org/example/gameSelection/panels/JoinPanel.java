@@ -1,22 +1,19 @@
-package org.example.game_selection.panels;
+package org.example.gameSelection.panels;
 
-import org.example.client_server_system.Client;
-import org.example.game_selection.GameSelection;
+import org.example.clientServerSystem.Client;
+import org.example.gameSelection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class JoinPanel extends JPanel {
-
     GameSelection parentWindow;
-    JTextField textField1;
-    JTextField textField2;
-    JTextField textField3;
+    JTextField nameField;
+    JTextField ipField;
+    JTextField portField;
 
     public JoinPanel(GameSelection parentWindow) {
         this.parentWindow = parentWindow;
-
-
         // JPanel Einstellungen
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
@@ -29,20 +26,19 @@ public class JoinPanel extends JPanel {
     }
 
     private void initWindow() {
-        createInputLabel(1, "Username:", textField1 = new JTextField());
-        createInputLabel(2, "IP:", textField2 = new JTextField());
-        createInputLabel(3, "Port:", textField3 = new JTextField());
+        createInputLabel(1, "Username:", nameField = new JTextField());
+        createInputLabel(2, "IP:", ipField = new JTextField());
+        createInputLabel(3, "Port:", portField = new JTextField());
 
         initButton();
     }
 
     protected void initButton() {
-
         // Join Button
         JButton joinButton = new JButton("JOIN");
         joinButton.setBounds((parentWindow.getWidth() - 100) / 2, parentWindow.getHeight() / 10 * 6, 100, parentWindow.getHeight() / 9);
         joinButton.setVisible(true);
-        joinButton.addActionListener(e -> {Client client = new Client(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), parentWindow);});
+        joinButton.addActionListener(e -> {Client client = new Client(nameField.getText(), ipField.getText(), Integer.parseInt(portField.getText()), parentWindow);});
         add(joinButton);
 
         // Return Button
@@ -76,5 +72,4 @@ public class JoinPanel extends JPanel {
 
         add(namePanel);
     }
-
 }

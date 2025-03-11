@@ -1,8 +1,8 @@
-package org.example.game_selection.panels;
+package org.example.gameSelection.panels;
 
-import org.example.client_server_system.Client;
-import org.example.client_server_system.Server;
-import org.example.game_selection.GameSelection;
+import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.Server;
+import org.example.gameSelection.GameSelection;
 
 import javax.swing.*;
 import java.awt.*;

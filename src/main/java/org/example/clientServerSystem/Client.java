@@ -1,9 +1,9 @@
-package org.example.client_server_system;
+package org.example.clientServerSystem;
 
 import org.example.game.GameWindow;
-import org.example.game_selection.GameSelection;
-import org.example.game_selection.panels.PanelType;
-import org.example.game_selection.panels.WaitingLobby;
+import org.example.gameSelection.GameSelection;
+import org.example.gameSelection.panels.PanelType;
+import org.example.gameSelection.panels.WaitingLobby;
 import org.example.logic.*;
 
 import javax.swing.*;
@@ -13,7 +13,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Client {
@@ -65,69 +64,75 @@ public class Client {
     private void startServerListenLoop() {
         new Thread(() -> {
             try {
-                while (true) {
-                    buffer.clear();
-                    int bytesRead = clientChannel.read(buffer);
-
-                    if (bytesRead > 0) {
-                        // wandelt bytes in String um
-                        buffer.flip();
-                        byte[] bytes = new byte[bytesRead];
-                        buffer.get(bytes);
-                        String message = new String(bytes).trim();
-                        System.out.println("Server-message: " + message);
-
-                        String[] messages = message.split("\n");
-
-                        for (String msg: messages){
-                            msg = msg.trim();
-
-                            // teilt Nachricht in Typ und Inhalt auf
-                            String[] parts = msg.split(":", 2);
-                            if (parts.length < 2) return; // Nachrichtenformat ungültig
-
-                            MessageType messageType = MessageType.valueOf(parts[0]);
-                            String content = parts[1];
-
-                            switch (messageType) {
-                                case UPDATE_LOBBY -> updateWaitingLobby(content);
-                                case OPEN_GAME -> openGame(content);
-                                case CARD_PLAYED -> {
-                                    System.out.println("Client-content: " + content);
-                                    parts = content.split(":");
-                                    gameWindow.setSpielstart(true);
-                                    gameWindow.cardPlayed(parts[0]);
-                                    playerTurn = Integer.parseInt(parts[1]);
-                                    gameWindow.enableButtons();
-                                }
-                                case REIZEN -> gameWindow.enableReizen(content, false);
-                                case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
-                                case START_SPIELAUSWAHL -> {
-                                    SpielAuswahl spielAuswahl = new SpielAuswahl(gameWindow, this);
-                                }
-                                case TRUMPF -> {
-                                    String ansageUser = "ERROR";
-                                    for (String[] info: WaitingLobby.getInstance().players) {
-                                        InetSocketAddress inetAddress = (InetSocketAddress) clientChannel.getRemoteAddress();
-                                        if (info[1].equals(inetAddress.getAddress().getHostAddress())) ansageUser = info[0];
-                                    }
-                                    trumpf = Farbe.valueOf(content);
-                                    Mischen mischen = new Mischen();
-                                    gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
-                                    gameWindow.updateButtonText();
-                                    JOptionPane.showMessageDialog(gameWindow, "Spieler " + ansageUser + " spielt " + trumpf.name());
-                                }
-                                case END_GAME -> showResult(content);
-                            }
-                        }
-                    }
-                }
+                 startClientLogic();
             } catch (IOException e) {
                 System.out.println("Disconnected from server.");
             }
         }).start();
+
     }
 
+    public void startClientLogic() throws IOException {
+        while (true) {
+            buffer.clear();
+            int bytesRead = clientChannel.read(buffer);
+            if (bytesRead > 0) {
+                // wandelt bytes in String um
+                buffer.flip();
+                byte[] bytes = new byte[bytesRead];
+                buffer.get(bytes);
+                String message = new String(bytes).trim();
+                System.out.println("Server-message: " + message);
+
+                String[] messages = message.split("\n");
+
+                for (String msg: messages){
+                    msg = msg.trim();
+
+                    // teilt Nachricht in Typ und Inhalt auf
+                    String[] parts = msg.split(":", 2);
+                    if (parts.length < 2) return; // Nachrichtenformat ungültig
+
+                    MessageType messageType = MessageType.valueOf(parts[0]);
+                    String content = parts[1];
+
+                    switch (messageType) {
+                        case UPDATE_LOBBY -> updateWaitingLobby(content);
+                        case OPEN_GAME -> openGame(content);
+                        case CARD_PLAYED -> cradPlayed(content);
+                        case REIZEN -> gameWindow.enableReizen(content, false);
+                        case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
+                        case START_SPIELAUSWAHL -> new SpielAuswahl(gameWindow, this);
+                        case TRUMPF -> trumpf(content);
+                        case END_GAME -> showResult(content);
+                        default -> throw new ArithmeticException("NO SUCH MESSAGEYTYPE");
+                    }
+                }
+            }
+        }
+    }
+
+    private void trumpf(String content) throws IOException {
+        String ansageUser = "ERROR";
+        for (String[] info: WaitingLobby.getInstance().players) {
+            InetSocketAddress inetAddress = (InetSocketAddress) clientChannel.getRemoteAddress();
+            if (info[1].equals(inetAddress.getAddress().getHostAddress())) ansageUser = info[0];
+        }
+        trumpf = Farbe.valueOf(content);
+        Mischen mischen = new Mischen();
+        gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
+        gameWindow.updateButtonText();
+        JOptionPane.showMessageDialog(gameWindow, "Spieler " + ansageUser + " spielt " + trumpf.name());
+    }
+
+    private void cradPlayed(String content) {
+        System.out.println("Client-content: " + content);
+        String[] parts = content.split(":");
+        gameWindow.setSpielstart(true);
+        gameWindow.cardPlayed(parts[0]);
+        playerTurn = Integer.parseInt(parts[1]);
+        gameWindow.enableButtons();
+    }
 
     private void showResult(String content) {
         String[] parts = content.split(";");
@@ -148,7 +153,6 @@ public class Client {
         String[] decks = message.split(":");                    // alle Spielkarten
         List<Karte> deck = extractCards(decks[0].split(","));   // Spielkarten als Liste
         List<Karte> skat = extractCards(decks[1].split(","));   // Skat als Liste
-
         gameWindow = new GameWindow(deck, skat, this);
     }
 
