@@ -46,6 +46,7 @@ public class GameWindow extends JFrame {
     private boolean reizAntwort = false;
     public boolean skatDruecken;
     public int skatCount = 0;
+    CardImage cardImage;
 
 
 
@@ -241,6 +242,21 @@ public class GameWindow extends JFrame {
         if (jButton11.isVisible()) {
             jButton11.setText(deck.get(10).toString());
             jButton12.setText(deck.get(11).toString());
+        }
+        
+        jButton1.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(0).toString()) , 80, 120));
+        jButton2.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(1).toString()) , 80, 120));
+        jButton3.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(2).toString()) , 80, 120));
+        jButton4.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(3).toString()) , 80, 120));
+        jButton5.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(4).toString()) , 80, 120));
+        jButton6.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(5).toString()) , 80, 120));
+        jButton7.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(6).toString()) , 80, 120));
+        jButton8.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(7).toString()) , 80, 120));
+        jButton9.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(8).toString()) , 80, 120));
+        jButton10.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(9).toString()) , 80, 120));
+        if (jButton11.isVisible()) {
+            jButton11.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(10).toString()) , 80, 120));
+            jButton12.setIcon(cardImage.loadImageFromFile(cardImage.bilder.get(deck.get(11).toString()) , 80, 120));
         }
     }
 
