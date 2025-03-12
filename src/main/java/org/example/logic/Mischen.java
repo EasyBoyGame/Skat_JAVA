@@ -10,8 +10,7 @@ public class Mischen {
     public List<Karte> kartenSp3;
     public List<Karte> skat;
 
-
-
+    //Konnstruktor
     public Mischen() {
         deck = kartenErstellen();
     }
@@ -33,6 +32,7 @@ public class Mischen {
 
 
     public List<Karte> kartenErstellen() {
+        // erstellt alle Karten
         List<Karte> deck = new ArrayList<>();
         for (Farbe farbe : Farbe.values()) {
             if (farbe == Farbe.GRAND || farbe == Farbe.NULL) continue;
@@ -40,6 +40,7 @@ public class Mischen {
                 deck.add(new Karte(farbe, kartenart));
             }
         }
+        //mischt die Karten
         Collections.shuffle(deck);
 
         kartenSp1 = kartenSortieren(deck.subList(0 ,10), Farbe.KREUZ);

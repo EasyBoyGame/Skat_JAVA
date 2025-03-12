@@ -18,11 +18,11 @@ public class HostPanel extends JPanel {
     public HostPanel(GameSelection parentWindow) {
         this.parentWindow = parentWindow;
 
+        // panel Einstellungen
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
 
         initWindow();
-
 
         setVisible(true);
         revalidate();
@@ -32,7 +32,6 @@ public class HostPanel extends JPanel {
     private void initWindow() {
         createInputLabel(2, "Username:", textField1 = new JTextField());
         createInputLabel(3, "Port:", textField2 = new JTextField());
-
         initButton();
     }
 

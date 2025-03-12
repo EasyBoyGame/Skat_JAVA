@@ -23,8 +23,7 @@ public class WaitingLobby extends JPanel {
         this.parentWindow = parentWindow;
         parentWindow.setResizable(false);
 
-
-        
+        // Panel Einstellungen
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));
 
@@ -43,6 +42,8 @@ public class WaitingLobby extends JPanel {
         initButtons();
         initLabels();
     }
+
+    // Waitinglobby wird als Singleton benutzt
     public static WaitingLobby createInstance(GameSelection parentWindow){
         if (INSTANCE == null){
             return INSTANCE = new WaitingLobby(parentWindow);
@@ -50,6 +51,7 @@ public class WaitingLobby extends JPanel {
         return INSTANCE;
     }
 
+    // Waitinglobby wird als Singleton benutzt
     public static WaitingLobby getInstance(){
         return INSTANCE;
     }

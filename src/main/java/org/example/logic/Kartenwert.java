@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class Kartenwert {
     public HashMap<String, Integer> kartenWertigkeit = new HashMap<>();
 
+    // Konstruktor
     public Kartenwert(Farbe trumpf){
         if(trumpf != Farbe.NULL){
             kartenWertigkeit.put("SIEBEN", 1);

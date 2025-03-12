@@ -16,7 +16,6 @@ public class JoinPanel extends JPanel {
     public JoinPanel(GameSelection parentWindow) {
         this.parentWindow = parentWindow;
 
-
         // JPanel Einstellungen
         setLayout(null);
         setPreferredSize(new Dimension(parentWindow.getWidth(), parentWindow.getHeight()));

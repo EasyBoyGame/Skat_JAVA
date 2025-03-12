@@ -147,6 +147,7 @@ public class Server implements Runnable {
         String message = new String(bytes).trim();
         System.out.println("Received: " + message);
 
+        // geht Nachrichten einzeln durch, falls mehrere im Buffer waren
         String[] messages = message.split("\n");
         for (String msg : messages) {
             processMessage(client, msg.trim());
@@ -165,7 +166,7 @@ public class Server implements Runnable {
         // Verarbeitet unterschiedliche Typen von Nachrichten
         switch (messageType) {
             case CONNECTION:
-                setMetaData(client, trim);
+                setMetaData(trim);
                 sendServerBroadcast(MessageType.UPDATE_LOBBY, socketListToString());
                 break;
             case OPEN_GAME:
@@ -186,6 +187,7 @@ public class Server implements Runnable {
             case CARD_PLAYED:
                 stich.add(content);
                 stichWin = (this.stichWin + 1) % 3;
+                // nach drei Karten soll der Gewinner ermittelt und der Stich zugeteilt werden
                 if (stich.size() > 2) {
                     stichWin = vergleichStich(stich);
                     if (stichWin == soloPlayer) {
@@ -199,11 +201,14 @@ public class Server implements Runnable {
                 }
                 System.out.println("Augensolo: " + augenSolo);
                 System.out.println("Augenduo: " + augenDuo);
+
+                // wird solange ausgeführt, wie noch Karten im Spiel sind
                 if (playedCards < 31) {
                     playedCards++;
                     sendServerBroadcast(MessageType.CARD_PLAYED, content + ":" + stichWin);
                     System.out.println("Server-content: " + content);
                 }
+                // nach legen aller Karten werden die Punkte ausgezählt
                 if (playedCards == 31) {
                     setPoints(true);
                 }
@@ -230,6 +235,7 @@ public class Server implements Runnable {
 
 
     private void startNewGame() {
+        // Zurücksetzen aller Basiswerte am Spielanfang
         reizen = new Reizen();
         augenSolo = 0;
         augenDuo = 0;
@@ -243,7 +249,7 @@ public class Server implements Runnable {
         sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
     }
 
-
+    // Logik um den Gewinner beim Reizen zu bestimmen
     private void reizenAntwort(String content) {
         if (content.equals("true")) {
             sendServerMessage(clients.get(reizPlayer), MessageType.REIZEN, "" + reizen.appendReizwert());
@@ -259,7 +265,7 @@ public class Server implements Runnable {
         }
     }
 
-
+    // Logik um den Gewinner beim Reizen zu bestimmen
     private void reizen(String content) {
         if (content.equals("false")) {
             if (reizPlayer == startPlayer) {
@@ -276,7 +282,10 @@ public class Server implements Runnable {
 
 
     private void spreadCards() {
+        // Generierung von Karten
         Mischen mischen = new Mischen();
+
+        // verteilt die Karten an die drei Spieler
         int counter = 1;
         for (SocketChannel client : clients) {
 
@@ -299,7 +308,7 @@ public class Server implements Runnable {
         }
     }
 
-
+    // sendet ein Nachricht an alle Clients
     public void sendServerBroadcast(MessageType messageType, String message) {
         for (SocketChannel client : clients) {
             ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
@@ -312,6 +321,7 @@ public class Server implements Runnable {
     }
 
 
+    // sendet eine Nachricht an einen einzelnen Client
     private void sendServerMessage(SocketChannel client, MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
         try {
@@ -322,12 +332,13 @@ public class Server implements Runnable {
     }
 
 
-    private void setMetaData(SocketChannel socketChannel, String message) {
+    //Speichert die Usernames der Clients ab
+    private void setMetaData(String message) {
         String[] parts = message.split(":", 2);
         usernames.add(parts[1]);
     }
 
-
+    // wandelt Clientliste und Usernameliste in einen String um
     private String socketListToString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < clients.size(); i++) {
@@ -345,23 +356,26 @@ public class Server implements Runnable {
 
     // Entscheidet, wer den Stich bekommt
     private int vergleichStich(List<String> karten) {
+        // setzt Karte 1 als Gewinner
         String gewinnerKarte = karten.get(0);
         int index = stichWin;
         int gewinnerIndex = index;
+        // Bestimmt welche Farbe im Stich bedient werden musste
         String bedient = karten.get(0).split(" ")[0];
         if (istTrumpf(karten.get(0))) bedient = "TRUMPF";
         Kartenwert kartenwert = new Kartenwert(trumpf);
 
         int cardPoints2 = cardToPoints(karten.get(1), bedient);
         int cardPoints3 = cardToPoints(karten.get(2), bedient);
-        
+
+        // guckt ob Karte 2 besser ist als Karte 1
         if (cardToPoints(gewinnerKarte, bedient) < cardPoints2 || (cardToPoints(gewinnerKarte, bedient) == cardPoints2 && kartenwert.getFarbwert(gewinnerKarte) < kartenwert.getFarbwert(karten.get(1)))){
             gewinnerKarte = karten.get(1);
             gewinnerIndex = (index + 1) % 3;
         }
 
+        // guckt ob Karte 3 besser ist als Karte 1 und 2
         if (cardToPoints(gewinnerKarte, bedient) < cardPoints3 || (cardToPoints(gewinnerKarte, bedient) == cardPoints3 && kartenwert.getFarbwert(gewinnerKarte) < kartenwert.getFarbwert(karten.get(2)))){
-            gewinnerKarte = karten.get(2);
             gewinnerIndex = (index + 2) % 3;
         }
 
@@ -369,6 +383,7 @@ public class Server implements Runnable {
     }
 
 
+    // rechnet einen Punktewert passend zur Karte im Stich aus
     private int cardToPoints(String karte, String bedient) {
         Kartenwert kartenwert = new Kartenwert(trumpf);
         int points = 0;

@@ -31,7 +31,7 @@ public class Client {
 
 
     /**
-     * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vomServer
+     * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vom Server
      *
      * @param username Name des Spielers im Spiel
      * @param ip       Addresse aus dem Intranet
@@ -49,6 +49,7 @@ public class Client {
     }
 
 
+    // Client verbindet sich mit dem Server
     private void initClient() {
         try {
             clientChannel = SocketChannel.open(new InetSocketAddress(ip, port));
@@ -66,6 +67,7 @@ public class Client {
         new Thread(() -> {
             try {
                 while (true) {
+                    // liest Nachricht die vom Server über den Socket geschickt wurde
                     buffer.clear();
                     int bytesRead = clientChannel.read(buffer);
 
@@ -77,8 +79,8 @@ public class Client {
                         String message = new String(bytes).trim();
                         System.out.println("Server-message: " + message);
 
+                        // geht Nachrichten einzeln durch, falls mehrere im Buffer waren
                         String[] messages = message.split("\n");
-
                         for (String msg: messages){
                             msg = msg.trim();
 
@@ -89,6 +91,7 @@ public class Client {
                             MessageType messageType = MessageType.valueOf(parts[0]);
                             String content = parts[1];
 
+                            // verarbeitet Nachricht
                             switch (messageType) {
                                 case UPDATE_LOBBY -> updateWaitingLobby(content);
                                 case OPEN_GAME -> openGame(content);
@@ -129,6 +132,7 @@ public class Client {
     }
 
 
+    // zeigt nach Ende eines Spiels die Ergebnisse an
     private void showResult(String content) {
         String[] parts = content.split(";");
         String message = "";
@@ -140,19 +144,23 @@ public class Client {
 
 
     private void openGame(String message) {
+        // schließt Fenster vom alten Spiel, falls nach abschluss ein neues angefangen wird
         if(gameWindow != null){
             gameWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
         }
 
+        //Aufteilung Karten
         String[] decks = message.split(":");                    // alle Spielkarten
         List<Karte> deck = extractCards(decks[0].split(","));   // Spielkarten als Liste
         List<Karte> skat = extractCards(decks[1].split(","));   // Skat als Liste
 
+        // neues Spiel wird gestartet
         gameWindow = new GameWindow(deck, skat, this);
     }
 
 
+    // wandelt String in Kartenliste um
     private List<Karte> extractCards(String[] list) {
         List<Karte> cards = new ArrayList<>();
         for (String card : list) {
@@ -163,6 +171,7 @@ public class Client {
     }
 
 
+    // nach joinen eines neuen Players wird das Fenster der Warteschleife geupdatet
     private void updateWaitingLobby(String message) {
         WaitingLobby.getInstance().setClient(this);
         WaitingLobby.getInstance().setPort(port);
@@ -179,9 +188,9 @@ public class Client {
     }
 
 
+    // sendet Nachricht an den Server
     public void sendPlayerActions(MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
-
         try {
             clientChannel.write(tempBuffer);
         } catch (IOException e) {

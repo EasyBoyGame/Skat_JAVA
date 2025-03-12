@@ -159,26 +159,14 @@ public class SpielAuswahl extends JFrame {
         List<Karte> deck = gameWindow.getDeck();
         deck.addAll(gameWindow.getSkat());
         gameWindow.setDeck(deck);
-        //GUI.dec1.addAll(GUI.decskat);
 
-        spielmodus = Farbe.KREUZ;
+        if (spielmodus == null) spielmodus = Farbe.KREUZ;
         switch (spielmodus) {
-            case KREUZ:
-            case GRAND:
-                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KREUZ));
-                break;
-            case PIK:
-                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.PIK));
-                break;
-            case HERZ:
-                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.HERZ));
-                break;
-            case KARO:
-                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KARO));
-                break;
-            case NULL:
-                gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.NULL));
-                break;
+            case KREUZ, GRAND -> gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KREUZ));
+            case PIK -> gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.PIK));
+            case HERZ -> gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.HERZ));
+            case KARO -> gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.KARO));
+            case NULL -> gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), Farbe.NULL));
         }
         client.sendPlayerActions(MessageType.BUBEN, getBuben());
 
@@ -197,11 +185,11 @@ public class SpielAuswahl extends JFrame {
 
     // Button Spiel ansagen
     public void jButton9_ActionPerformed(ActionEvent evt) {
-        if (spielmodus == null) {
+        if (spielmodus == null) { // Button kann nur geklickt werden, nachdem ein Spielmodus ausgewählt wurde
             JOptionPane.showMessageDialog(this, "Bitte wählen Sie ein Spiel aus!");
             return;
         }
-        if (gameWindow.skatDruecken) {
+        if (gameWindow.skatDruecken) { // nach Skataufnahme Button nur drücken, wenn zwei Karten zurück in den Skat gelegt wurden
             if (gameWindow.skatCount != 2) {
                 JOptionPane.showMessageDialog(this, "Bitte legen Sie den Skat ab!");
                 return;

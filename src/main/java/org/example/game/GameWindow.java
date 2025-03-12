@@ -276,6 +276,7 @@ public class GameWindow extends JFrame {
 
 
     public void buttonActionPerformed(ActionEvent evt) {
+        // Buttonlogik zum Wegdrücken des Skats
         if(skatDruecken && skatCount < 2){
             JButton button = (JButton) evt.getSource();
             button.setVisible(false);
@@ -285,6 +286,7 @@ public class GameWindow extends JFrame {
             if(skatCount == 2) client.sendPlayerActions(MessageType.SKAT_SENDEN, skat.get(0).toString() + "," + skat.get(1).toString());
         }
 
+        // allgemeine Buttonlogik (Sendet Nachricht, dass eine Karte gespielt wurde an Server)
         if (!spielstart) return;
         int currentTurn = client.getPlayerTurn();
         if (players[currentTurn][0].equals(client.getUsername())) {
@@ -298,8 +300,10 @@ public class GameWindow extends JFrame {
     }
 
 
+    // updatet die gelegten Karten
     public void cardPlayed(String content) {
         if (content.isEmpty()) return;
+        // löscht alle Karten, wenn ein Stich abgeschlossen ist und ein neuer anfängt
         if (cardPlaces[2].getIcon() != null && cardPlaces[1].getIcon() != null && cardPlaces[0].getIcon() != null){
             for (JLabel label: cardPlaces) {
                 label.setText("");
@@ -356,7 +360,7 @@ public class GameWindow extends JFrame {
         jButton12.setVisible(true);
     }
 
-
+    // sendet Reizinfos an den Server
     private void reizen_ActionPerformed(ActionEvent actionEvent) {
         if (reizAntwort){
             handleReizantwort(actionEvent, MessageType.REIZ_ANTWORT);
@@ -366,6 +370,7 @@ public class GameWindow extends JFrame {
     }
 
 
+    // sendet Reizinfos an den Server
     private void handleReizantwort(ActionEvent actionEvent, MessageType messageType){
         if (actionEvent.getSource() == jButton14) {
             client.sendPlayerActions(messageType, "true");

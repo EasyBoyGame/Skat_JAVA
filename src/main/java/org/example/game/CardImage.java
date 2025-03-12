@@ -50,6 +50,7 @@ public class CardImage {
     }
 
 
+    // gibt Dateipfad eines Bildes passend zum String aus
     public ImageIcon loadImageFromFile(String filePath, int width, int height) {
         try {
             ImageIcon icon = new ImageIcon(filePath); // Lade Bild von lokalem Pfad
