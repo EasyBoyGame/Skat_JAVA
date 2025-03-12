@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class GameSelection extends JFrame {
     //Attribute
-    private double ScreenWidth = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    private double ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    private final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    private final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
     public HashMap<PanelType, JPanel> panels = new HashMap<>();
     private JPanel currentPanel;
@@ -30,16 +30,14 @@ public class GameSelection extends JFrame {
 
     public void initJFrame() {
         //JFrame Einstellungen
-        setSize((int) (ScreenWidth/2), (int) (ScreenHeight/2));
+        setSize((int) (SCREEN_WIDTH /2), (int) (SCREEN_HEIGHT /2));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
 
-    // Methode zum Wechseln zwischen verschiedenen UIs (Dank verwendung von Enum beliebig ausbaubar)
     public void changePanel(PanelType type){
-        if (currentPanel != null)
-            remove(currentPanel);
+        if (currentPanel != null) remove(currentPanel);
         currentPanel = panels.get(type);
         add(currentPanel);
         revalidate();

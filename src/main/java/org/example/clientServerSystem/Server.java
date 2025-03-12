@@ -82,7 +82,6 @@ public class Server implements Runnable {
         }
     }
 
-
     private void startServerLoop() {
         try {
             while (true) {
@@ -95,7 +94,6 @@ public class Server implements Runnable {
                 while (iterator.hasNext()) {
                     SelectionKey key = iterator.next();
                     iterator.remove();
-
                     if (key.isAcceptable()) {
                         acceptPlayer(selector, serverChannel);
                     } else if (key.isReadable()) {
@@ -141,7 +139,6 @@ public class Server implements Runnable {
         buffer.get(bytes);
         String message = new String(bytes).trim();
         System.out.println("Received: " + message);
-
         String[] messages = message.split("\n");
         for (String msg : messages) {
             processMessage(msg.trim());

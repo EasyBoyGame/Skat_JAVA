@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CardImage {
+
     Map<String, String> bilder = new HashMap<>();
     public CardImage(){
-
         bilder.put("KARO SIEBEN", "src/main/resources/deck/7D.png");
         bilder.put("KARO ACHT", "src/main/resources/deck/8D.png");
         bilder.put("KARO NEUN", "src/main/resources/deck/9D.png");
@@ -44,11 +44,9 @@ public class CardImage {
         bilder.put("KREUZ DAME", "src/main/resources/deck/QC.png");
         bilder.put("KREUZ KOENIG", "src/main/resources/deck/KC.png");
         bilder.put("KREUZ ASS", "src/main/resources/deck/AC.png");
-
         bilder.put("DEFAULT", "src/main/resources/deck/default.png");
 
     }
-
 
     public ImageIcon loadImageFromFile(String filePath, int width, int height) {
         try {

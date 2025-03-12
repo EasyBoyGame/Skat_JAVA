@@ -2,6 +2,7 @@ package org.example.game;
 
 import org.example.clientServerSystem.Client;
 import org.example.clientServerSystem.MessageType;
+import org.example.clientServerSystem.Player;
 import org.example.gameSelection.panels.WaitingLobby;
 import org.example.logic.Farbe;
 import org.example.logic.Karte;
@@ -31,7 +32,7 @@ public class GameWindow extends JFrame {
     private List<Karte> deck;
     public List<Karte> skat;
     private Client client;
-    private String[][] players;
+    public static ArrayList<Player> players = new ArrayList<>();
     private boolean spielstart = false;
     private boolean reizAntwort = false;
     public boolean skatDruecken;
@@ -52,27 +53,19 @@ public class GameWindow extends JFrame {
         int x = (d.width - getSize().width) / 2;
         int y = (d.height - getSize().height) / 2;
         setLocation(x, y);
-        setTitle("SKAT - " + client.getUsername());
+        setTitle("SKAT - " + client.getPlayer().getUsername());
         setResizable(false);
         Container cp = getContentPane();
         cp.setLayout(null);
 
         //region jLabel
-        String myName = client.getUsername();
-        String username1;
-        String username2;
+        String myName = client.getPlayer().getUsername();
         int userindex;
-        if (players[0][0].equals(myName)) {
-            username1 = players[1][0];
-            username2 = players[2][0];
+        if (players.get(0).getUsername().equals(myName)) {
             userindex = 0;
-        } else if (players[1][0].equals(myName)) {
-            username2 = players[0][0];
-            username1 = players[2][0];
+        } else if (players.get(1).getUsername().equals(myName)) {
             userindex = 1;
         } else {
-            username1 = players[0][0];
-            username2 = players[1][0];
             userindex = 2;
         }
 
@@ -93,11 +86,11 @@ public class GameWindow extends JFrame {
 
         jLabel1.setBounds(400, 16, 80, 24);
         jLabel1.setFont(new Font("Dialog", Font.PLAIN, 11));
-        jLabel1.setText(username1);
+        jLabel1.setText("anderer 1");
         cp.add(jLabel1);
         jLabel2.setBounds(768, 16, 80, 24);
         jLabel2.setFont(new Font("Dialog", Font.PLAIN, 11));
-        jLabel2.setText(username2);
+        jLabel2.setText("anderer 2");
         cp.add(jLabel2);
         //endregion
 
@@ -202,13 +195,14 @@ public class GameWindow extends JFrame {
 
         if (!spielstart) return;
         int currentTurn = client.getPlayerTurn();
-        if (players[currentTurn][0].equals(client.getUsername())) {
+        if (players.get(currentTurn) == client.getPlayer()) {
             JButton button = (JButton) evt.getSource();
             button.setVisible(false);
             button.setEnabled(false);
             client.sendPlayerActions(MessageType.CARD_PLAYED, button.getText());
         } else {
-            JOptionPane.showMessageDialog(this, "Spieler " + players[currentTurn][0] + " ist am Zug!\nBitte warten");
+            JOptionPane.showMessageDialog(this, "Spieler " +
+                    players.get(currentTurn).getUsername() + " ist am Zug!\nBitte warten");
         }
     }
 
@@ -239,7 +233,7 @@ public class GameWindow extends JFrame {
 
     public void enableButtons(){
         int currentTurn = client.getPlayerTurn();
-        if (players[currentTurn][0].equals(client.getUsername())){
+        if (players.get(currentTurn) == client.getPlayer()){
             setButtonEnable(true);
         } else {
             setButtonEnable(false);

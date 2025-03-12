@@ -1,6 +1,7 @@
 package org.example.gameSelection.panels;
 
 import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.Player;
 import org.example.gameSelection.GameSelection;
 
 import javax.swing.*;
@@ -38,7 +39,8 @@ public class JoinPanel extends JPanel {
         JButton joinButton = new JButton("JOIN");
         joinButton.setBounds((parentWindow.getWidth() - 100) / 2, parentWindow.getHeight() / 10 * 6, 100, parentWindow.getHeight() / 9);
         joinButton.setVisible(true);
-        joinButton.addActionListener(e -> {Client client = new Client(nameField.getText(), ipField.getText(), Integer.parseInt(portField.getText()), parentWindow);});
+        joinButton.addActionListener(e -> new Client(new Player(nameField.getText(),
+                ipField.getText()), Integer.parseInt(portField.getText()), parentWindow));
         add(joinButton);
 
         // Return Button

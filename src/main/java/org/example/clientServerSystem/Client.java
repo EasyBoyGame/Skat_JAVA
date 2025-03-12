@@ -20,37 +20,30 @@ public class Client {
     //Attribute
     private SocketChannel clientChannel;
     private ByteBuffer buffer;
-    private String username;
-    private String ip;
-    private GameSelection parentwindow;
-    private int port;
+    private final Player player;
+    private final GameSelection parentWindow;
+    private final int port;
     private GameWindow gameWindow;
     private int playerTurn = 0;
-    private Farbe trumpf;
-
 
     /**
      * Ein Client erkennt und sendet Inputs des Spielers an den Server und Updated die GUI durch Infos vomServer
      *
-     * @param username Name des Spielers im Spiel
-     * @param ip       Addresse aus dem Intranet
      * @param port     Port des Servers mit dem man sich verbinden möchte
      */
-    public Client(String username, String ip, int port, GameSelection parentwindow) {
-        this.username = username;
-        this.ip = ip;
+    public Client(Player player, int port, GameSelection parentwindow) {
+        this.player = player;
         this.port = port;
-        this.parentwindow = parentwindow;
+        this.parentWindow = parentwindow;
 
         initClient();
-        sendPlayerActions(MessageType.CONNECTION, username);
+        sendPlayerActions(MessageType.CONNECTION, player.getUsername());
         startServerListenLoop();
     }
 
-
     private void initClient() {
         try {
-            clientChannel = SocketChannel.open(new InetSocketAddress(ip, port));
+            clientChannel = SocketChannel.open(new InetSocketAddress(player.getIp(), port));
             clientChannel.configureBlocking(false);
             buffer = ByteBuffer.allocate(1024);
 
@@ -60,7 +53,6 @@ public class Client {
         }
     }
 
-
     private void startServerListenLoop() {
         new Thread(() -> {
             try {
@@ -69,7 +61,6 @@ public class Client {
                 System.out.println("Disconnected from server.");
             }
         }).start();
-
     }
 
     public void startClientLogic() throws IOException {
@@ -85,44 +76,46 @@ public class Client {
                 System.out.println("Server-message: " + message);
 
                 String[] messages = message.split("\n");
-
-                for (String msg: messages){
-                    msg = msg.trim();
-
+                for (String msg : messages){
                     // teilt Nachricht in Typ und Inhalt auf
-                    String[] parts = msg.split(":", 2);
+                    String[] parts = msg.trim().split(":", 2);
                     if (parts.length < 2) return; // Nachrichtenformat ungültig
 
                     MessageType messageType = MessageType.valueOf(parts[0]);
                     String content = parts[1];
-
-                    switch (messageType) {
-                        case UPDATE_LOBBY -> updateWaitingLobby(content);
-                        case OPEN_GAME -> openGame(content);
-                        case CARD_PLAYED -> cradPlayed(content);
-                        case REIZEN -> gameWindow.enableReizen(content, false);
-                        case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
-                        case START_SPIELAUSWAHL -> new SpielAuswahl(gameWindow, this);
-                        case TRUMPF -> trumpf(content);
-                        case END_GAME -> showResult(content);
-                        default -> throw new ArithmeticException("NO SUCH MESSAGEYTYPE");
-                    }
+                    handleMessageType(messageType, content);
                 }
             }
         }
     }
 
+    public void handleMessageType(MessageType messageType, String content) throws IOException {
+        switch (messageType) {
+            case UPDATE_LOBBY -> updateWaitingLobby(content);
+            case OPEN_GAME -> openGame(content);
+            case CARD_PLAYED -> cradPlayed(content);
+            case REIZEN -> gameWindow.enableReizen(content, false);
+            case REIZ_ANTWORT -> gameWindow.enableReizen(content, true);
+            case START_SPIELAUSWAHL -> new SpielAuswahl(gameWindow, this);
+            case TRUMPF -> trumpf(content);
+            case END_GAME -> showResult(content);
+            default -> throw new ArithmeticException("NO SUCH MESSAGEYTYPE");
+        }
+    }
+
     private void trumpf(String content) throws IOException {
         String ansageUser = "ERROR";
-        for (String[] info: WaitingLobby.getInstance().players) {
+        for (Player info: WaitingLobby.getInstance().players) {
             InetSocketAddress inetAddress = (InetSocketAddress) clientChannel.getRemoteAddress();
-            if (info[1].equals(inetAddress.getAddress().getHostAddress())) ansageUser = info[0];
+            if (info.getIp().equals(inetAddress.getAddress().getHostAddress()))
+                ansageUser = info.getUsername();
         }
-        trumpf = Farbe.valueOf(content);
+        Farbe trumpf = Farbe.valueOf(content);
         Mischen mischen = new Mischen();
         gameWindow.setDeck(mischen.kartenSortieren(gameWindow.getDeck(), trumpf));
         gameWindow.updateButtonText();
-        JOptionPane.showMessageDialog(gameWindow, "Spieler " + ansageUser + " spielt " + trumpf.name());
+        JOptionPane.showMessageDialog(gameWindow, "Spieler "
+                + ansageUser + " spielt " + trumpf.name());
     }
 
     private void cradPlayed(String content) {
@@ -136,16 +129,15 @@ public class Client {
 
     private void showResult(String content) {
         String[] parts = content.split(";");
-        String message = "";
-        message += parts[0].equals("WIN") ?
-                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen gewonnen => +" + parts[3] + " Punkte." :
-                WaitingLobby.getInstance().players[Integer.parseInt(parts[1])][0] + " hat mit " + parts[2] + " Augen verloren => --" + Integer.parseInt(parts[3]) * 2 + " Punkte.";
+        String player = WaitingLobby.getInstance().players.get(Integer.parseInt(parts[1])).getUsername();
+        String message = parts[0].equals("WIN") ?
+                player + " hat mit " + parts[2] + " Augen gewonnen => +" + parts[3] + " Punkte." :
+                player + " hat mit " + parts[2] + " Augen verloren => --" + Integer.parseInt(parts[3]) * 2 + " Punkte.";
         JOptionPane.showMessageDialog(gameWindow, message);
     }
 
-
     private void openGame(String message) {
-        if(gameWindow != null){
+        if(gameWindow != null) {
             gameWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
         }
@@ -156,7 +148,6 @@ public class Client {
         gameWindow = new GameWindow(deck, skat, this);
     }
 
-
     private List<Karte> extractCards(String[] list) {
         List<Karte> cards = new ArrayList<>();
         for (String card : list) {
@@ -166,22 +157,19 @@ public class Client {
         return cards;
     }
 
-
     private void updateWaitingLobby(String message) {
         WaitingLobby.getInstance().setClient(this);
         WaitingLobby.getInstance().setPort(port);
         String[] players = message.split(";", 5);
-        WaitingLobby.getInstance().players = new String[3][2];
-        WaitingLobby.getInstance().connectedPlayers = 0;
+        WaitingLobby.getInstance().players.clear();
         for (String player : players) {
             if (player.isEmpty()) continue;
             String[] parts = player.split(":", 2);
             WaitingLobby.getInstance().addPlayer(parts[0], parts[1]);
         }
         WaitingLobby.getInstance().updateWindow();
-        parentwindow.changePanel(PanelType.WAITING_LOBBY);
+        parentWindow.changePanel(PanelType.WAITING_LOBBY);
     }
-
 
     public void sendPlayerActions(MessageType messageType, String message) {
         ByteBuffer tempBuffer = ByteBuffer.wrap((messageType.name() + ":" + message + "\n").getBytes());
@@ -198,8 +186,7 @@ public class Client {
         return playerTurn;
     }
 
-
-    public String getUsername() {
-        return username;
+    public Player getPlayer() {
+        return player;
     }
 }

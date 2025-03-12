@@ -1,6 +1,7 @@
 package org.example.gameSelection.panels;
 
 import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.Player;
 import org.example.clientServerSystem.Server;
 import org.example.gameSelection.GameSelection;
 
@@ -47,7 +48,8 @@ public class HostPanel extends JPanel {
             new Thread(server).start();
             try {
                 Thread.sleep(500);
-                Client client = new Client(username, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+                new Client(new Player(username, InetAddress.getLocalHost().getHostAddress()),
+                        port, parentWindow);
             } catch (InterruptedException | UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }

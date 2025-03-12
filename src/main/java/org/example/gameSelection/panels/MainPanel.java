@@ -1,6 +1,7 @@
 package org.example.gameSelection.panels;
 
 import org.example.clientServerSystem.Client;
+import org.example.clientServerSystem.Player;
 import org.example.clientServerSystem.Server;
 import org.example.gameSelection.GameSelection;
 
@@ -36,18 +37,14 @@ public class MainPanel extends JPanel {
         debugButton.setBounds(centerX, centerY/ 3, buttonWidth, buttonHeight);
         debugButton.addActionListener(e -> {
             int port = 1234;
-            String username1 = "Debug1";
-            String username2 = "Debug2";
-            String username3 = "Debug3";
             Server server = new Server(port);
             new Thread(server).start();
             try {
-                Thread.sleep(300);
-                new Client(username1, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(300);
-                new Client(username2, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
-                Thread.sleep(300);
-                new Client(username3, InetAddress.getLocalHost().getHostAddress(), port, parentWindow);
+                for (int i = 0; i < 3; i++) {
+                    Thread.sleep(200);
+                    new Client(new Player("Debug"+i, InetAddress.getLocalHost().getHostAddress()),
+                            port, parentWindow);
+                }
             } catch (InterruptedException | UnknownHostException ex) {
                 throw new RuntimeException(ex);
             }
